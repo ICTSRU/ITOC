@@ -2,7 +2,7 @@
 
 Single entry point to every SRU system, service, form and ICTD-built tool — maintained by the IT Operations Center (ITOC), Executive Directorate of Communications & Information Technology, Sulaiman Al Rajhi University.
 
-**Current version:** 1.0 (shown in the page footer)
+**Current version:** 1.2 (shown in the page footer)
 
 ## Repository structure
 ```

@@ -1,5 +1,13 @@
 # Changelog — ITOC Index
 
+## [1.2] — 2026-09-29
+### Changed
+- ITOC logo in the page header made smaller (desktop 92px → 68px, mobile 64px → 50px).
+
+## [1.1] — 2026-09-29
+### Changed
+- Removed the "ITOC —" prefix from the page heading; heading now reads "فهرس الأنظمة والخدمات" (ITOC logo remains beside it).
+
 ## [1.0] — 2026-09-29
 ### Added
 - First release of the ITOC Systems & Services Index, built from *SRU Systems & Services Links v1.2*.
