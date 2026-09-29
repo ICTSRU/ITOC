@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ITOC — فهرس موحد لروابط أنظمة وخدمات جامعة سليمان الراجحي">
+<meta name="version" content="1.0">
+<title>ITOC | فهرس الأنظمة والخدمات</title>
+<link rel="icon" type="image/png" href="assets/itoc-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#501e8c; --purple-dark:#3a1464; --purple-light:#f0ebf8;
+  --blue:#0a6eaa; --blue-light:#e6f3fa; --teal:#0a8a96;
+  --bg:#f7f5fb; --card:#fff; --ink:#241436; --muted:#6b5a80;
+  --border:rgba(80,30,140,.12); --radius:4px;
+  --amber:#9a5b00; --amber-bg:#fff4e0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:120px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Cairo",Tahoma,Arial,sans-serif;line-height:1.6}
+a{color:inherit}
+.container{max-width:1240px;margin:0 auto;padding:0 20px}
+
+/* Official header band: ICTD left, SRU right (RTL: first child = right) */
+.band{background:#fff;border-bottom:1px solid var(--border)}
+.band .container{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:10px;padding-bottom:10px}
+.band img{display:block;height:58px;width:auto;max-width:46vw;object-fit:contain}
+.band .ictd{height:64px}
+
+/* Sticky topbar + navbar */
+.sticky{position:sticky;top:0;z-index:20}
+.topbar{background:var(--purple-dark);color:#fff}
+.topbar .container{display:flex;align-items:center;gap:16px;padding-top:10px;padding-bottom:10px}
+.topbar .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;white-space:nowrap}
+.topbar .brand span{font-family:Arial,sans-serif;letter-spacing:.06em}
+.search{flex:1;position:relative;max-width:520px;margin-inline-start:auto}
+.search svg{position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+.search input{width:100%;font:inherit;font-size:.95rem;padding:9px 40px 9px 44px;border:0;border-radius:var(--radius);background:#fff;color:var(--ink)}
+.search input:focus{outline:3px solid #b9a3dc}
+.search kbd{position:absolute;inset-inline-end:10px;top:50%;transform:translateY(-50%);font:600 .72rem Arial,sans-serif;color:var(--muted);border:1px solid var(--border);border-radius:3px;padding:1px 6px;background:var(--bg)}
+.navbar{background:var(--purple)}
+.navbar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.navbar nav::-webkit-scrollbar{display:none}
+.navbar a{color:#fff;text-decoration:none;padding:9px 14px;font-size:.9rem;font-weight:600;white-space:nowrap;border-bottom:3px solid transparent}
+.navbar a:hover,.navbar a.active{background:rgba(255,255,255,.1);border-bottom-color:#8fd3f4}
+.diag{height:4px;background:linear-gradient(90deg,var(--blue),var(--teal))}
+
+/* Hero */
+.hero{padding:28px 0 8px}
+.hero .container{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center}
+.hero h1{margin:0 0 4px;font-size:clamp(1.6rem,3.2vw,2.3rem);color:var(--purple-dark);line-height:1.3}
+.hero h1 .en{font-family:Arial,sans-serif;color:var(--blue);letter-spacing:.04em}
+.hero p{margin:0;color:var(--muted);max-width:640px}
+.hero .itoc{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px}
+.hero .itoc img{display:block;height:92px;width:auto}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:999px;padding:3px 12px;font-size:.84rem;color:var(--muted)}
+.chip b{color:var(--purple);font-weight:800}
+.chip svg{width:14px;height:14px}
+
+/* Sections */
+main{padding:10px 0 40px}
+.section{margin-top:26px}
+.section-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.section-icon{width:40px;height:40px;display:grid;place-items:center;background:var(--purple);color:#fff;border-radius:var(--radius);flex:none}
+.section-icon svg{width:20px;height:20px}
+.section-head h2{margin:0;font-size:1.15rem;color:var(--purple-dark);line-height:1.3}
+.section-head p{margin:0;font-size:.85rem;color:var(--muted)}
+.section-head .count{margin-inline-start:auto;font-size:.8rem;color:var(--muted);background:var(--purple-light);padding:2px 10px;border-radius:999px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.card{display:flex;align-items:center;gap:12px;min-height:64px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;text-decoration:none;position:relative;transition:border-color .15s,box-shadow .15s,transform .15s}
+.card:hover,.card:focus-visible{border-color:var(--purple);box-shadow:0 4px 14px rgba(80,30,140,.12);transform:translateY(-1px);outline:none}
+.card .ic{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:var(--radius);background:var(--purple-light);color:var(--purple)}
+.card .ic svg{width:19px;height:19px}
+.section[data-id="ictd"] .card .ic{background:var(--blue-light);color:var(--blue)}
+.card .txt{min-width:0;display:flex;flex-direction:column}
+.card strong{font-size:.95rem;font-weight:700;line-height:1.35}
+.card strong[dir=ltr]{font-family:Arial,"Cairo",sans-serif;text-align:right;unicode-bidi:isolate}
+.card small{font-size:.76rem;color:var(--muted);line-height:1.35}
+.card .host{font:.72rem/1.3 Arial,sans-serif;color:#8a7c9c;direction:ltr;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{position:absolute;top:-8px;inset-inline-end:8px;font-size:.68rem;font-weight:700;border-radius:3px;padding:0 6px;line-height:1.6}
+.badge.int{background:var(--amber-bg);color:var(--amber);border:1px solid #f0d19c}
+.badge.new{background:var(--blue);color:#fff}
+.card .ext{margin-inline-start:auto;width:15px;height:15px;color:#b8acc9;flex:none}
+.hidden{display:none!important}
+.empty{display:none;text-align:center;padding:40px 20px;color:var(--muted);background:#fff;border:1px dashed var(--border);border-radius:var(--radius);margin-top:24px}
+
+footer{background:var(--purple-dark);color:#e6dcf5;font-size:.85rem}
+footer .container{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;padding-top:14px;padding-bottom:14px}
+footer .ver{font-family:Arial,sans-serif;background:rgba(255,255,255,.12);padding:0 8px;border-radius:3px}
+
+@media (max-width:760px){
+  .band img{height:40px}.band .ictd{height:46px}
+  .topbar .brand small{display:none}
+  .search kbd{display:none}
+  .hero .container{grid-template-columns:1fr}
+  .hero .itoc{justify-self:start}.hero .itoc img{height:64px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .card .host{display:none}
+  .card .ext{display:none}
+  .card{gap:8px;padding:10px 8px}
+  .card .ic{width:32px;height:32px}
+}
+@media print{
+  .sticky,.search,.empty{display:none!important}
+  body{background:#fff}.card{break-inside:avoid;box-shadow:none}
+  .card .host{display:block}
+}
+</style>
+</head>
+<body>
+
+<!-- Official header band -->
+<div class="band">
+  <div class="container">
+    <img src="assets/sru-logo.png" alt="جامعة سليمان الراجحي | Sulaiman Alrajhi University">
+    <img class="ictd" src="assets/ictd-logo.png" alt="الإدارة التنفيذية للاتصالات وتقنية المعلومات | Executive Directorate of Communications &amp; Information Technology">
+  </div>
+</div>
+
+<div class="sticky">
+  <header class="topbar">
+    <div class="container">
+      <div class="brand"><span>ITOC</span><small>مركز العمليات التقنية</small></div>
+      <label class="search">
+        <i data-lucide="search"></i>
+        <input id="q" type="search" placeholder="ابحث باسم النظام أو الرابط…" aria-label="بحث في الروابط" autocomplete="off">
+        <kbd>/</kbd>
+      </label>
+    </div>
+  </header>
+  <div class="navbar"><div class="container"><nav id="nav" aria-label="الأقسام"></nav></div></div>
+  <div class="diag"></div>
+</div>
+
+<section class="hero">
+  <div class="container">
+    <div>
+      <h1><span class="en">ITOC</span> — فهرس الأنظمة والخدمات</h1>
+      <p>نقطة وصول موحدة لجميع الأنظمة الجامعية والخدمات والنماذج والأدوات التي تديرها وتطورها الإدارة التنفيذية للاتصالات وتقنية المعلومات.</p>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="itoc"><img src="assets/itoc-logo.png" alt="ITOC — IT Operations Center"></div>
+  </div>
+</section>
+
+<main class="container">
+  <div class="empty" id="empty">لا توجد روابط مطابقة لعبارة البحث.</div>
+  <div id="sections"></div>
+</main>
+
+<footer>
+  <div class="container">
+    <div>مركز العمليات التقنية <b dir="ltr">ITOC</b> — الإدارة التنفيذية للاتصالات وتقنية المعلومات — جامعة سليمان الراجحي © 2026</div>
+    <div>الإصدار <span class="ver" dir="ltr">v1.0</span></div>
+  </div>
+</footer>
+
+<script src="assets/vendor/lucide.min.js"></script>
+<script src="links.js"></script>
+<script>
+(function(){
+  "use strict";
+  var SECTIONS = window.ITOC_SECTIONS || [];
+  var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+
+  // Internal-network detection: private IPv4 ranges or single-label hostnames
+  function isInternal(url){
+    try{
+      var h = new URL(url).hostname;
+      if (/^10\./.test(h) || /^192\.168\./.test(h) || /^172\.(1[6-9]|2\d|3[01])\./.test(h)) return true;
+      return h.indexOf(".") === -1;
+    }catch(e){ return false; }
+  }
+  function host(url){ try{ return new URL(url).host.replace(/^www\./,""); }catch(e){ return url; } }
+
+  var nav = document.getElementById("nav"), wrap = document.getElementById("sections");
+  var total = 0, internal = 0, navHtml = "", html = "";
+
+  SECTIONS.forEach(function(sec){
+    var links = sec.links || [];
+    total += links.length;
+    navHtml += '<a href="#' + esc(sec.id) + '">' + esc(sec.title) + '</a>';
+    html += '<section class="section" id="' + esc(sec.id) + '" data-id="' + esc(sec.id) + '">' +
+      '<div class="section-head"><div class="section-icon"><i data-lucide="' + esc(sec.icon || "folder") + '"></i></div>' +
+      '<div><h2>' + esc(sec.title) + '</h2>' + (sec.subtitle ? '<p>' + esc(sec.subtitle) + '</p>' : '') + '</div>' +
+      '<span class="count"><span data-n>' + links.length + '</span> رابط</span></div><div class="grid">';
+    links.forEach(function(l){
+      var intr = isInternal(l.url); if (intr) internal++;
+      var search = (l.name + " " + (l.note || "") + " " + l.url + " " + sec.title).toLowerCase();
+      html += '<a class="card" href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer" data-s="' + esc(search) + '"' +
+        (intr ? ' title="متاح من داخل شبكة الجامعة فقط"' : '') + '>' +
+        (intr ? '<span class="badge int">شبكة داخلية</span>' : (l.isNew ? '<span class="badge new">جديد</span>' : '')) +
+        '<span class="ic"><i data-lucide="' + esc(l.icon || "link") + '"></i></span>' +
+        '<span class="txt"><strong' + (l.ar ? '' : ' dir="ltr"') + '>' + esc(l.name) + '</strong>' +
+        (l.note ? '<small>' + esc(l.note) + '</small>' : '') +
+        '<span class="host">' + esc(host(l.url)) + '</span></span>' +
+        '<i class="ext" data-lucide="arrow-up-left"></i></a>';
+    });
+    html += '</div></section>';
+  });
+
+  nav.innerHTML = navHtml;
+  wrap.innerHTML = html;
+  document.getElementById("stats").innerHTML =
+    '<span class="chip"><i data-lucide="link"></i><b>' + total + '</b> رابط</span>' +
+    '<span class="chip"><i data-lucide="layers"></i><b>' + SECTIONS.length + '</b> أقسام</span>' +
+    '<span class="chip"><i data-lucide="shield"></i><b>' + internal + '</b> على الشبكة الداخلية</span>';
+
+  if (window.lucide) lucide.createIcons();
+
+  // Search
+  var q = document.getElementById("q"), empty = document.getElementById("empty");
+  var cards = [].slice.call(document.querySelectorAll(".card"));
+  var secs = [].slice.call(document.querySelectorAll(".section"));
+  function filter(){
+    var v = q.value.trim().toLowerCase(), shown = 0;
+    cards.forEach(function(c){ var ok = !v || c.getAttribute("data-s").indexOf(v) > -1; c.classList.toggle("hidden", !ok); if (ok) shown++; });
+    secs.forEach(function(s){
+      var n = s.querySelectorAll(".card:not(.hidden)").length;
+      s.classList.toggle("hidden", n === 0);
+      s.querySelector("[data-n]").textContent = n;
+    });
+    empty.style.display = shown ? "none" : "block";
+  }
+  q.addEventListener("input", filter);
+  q.addEventListener("keydown", function(e){
+    if (e.key === "Escape"){ q.value = ""; filter(); q.blur(); }
+    if (e.key === "Enter"){ var first = document.querySelector(".card:not(.hidden)"); if (first) window.open(first.href, "_blank", "noopener"); }
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "/" && document.activeElement !== q){ e.preventDefault(); q.focus(); }
+  });
+
+  // Highlight active section in navbar
+  if ("IntersectionObserver" in window){
+    var links = {}; [].forEach.call(nav.querySelectorAll("a"), function(a){ links[a.getAttribute("href").slice(1)] = a; });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if (en.isIntersecting){ for (var k in links) links[k].classList.remove("active"); if (links[en.target.id]) links[en.target.id].classList.add("active"); } });
+    }, { rootMargin: "-40% 0px -55% 0px" });
+    secs.forEach(function(s){ io.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
