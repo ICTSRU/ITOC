@@ -28,6 +28,7 @@ window.ITOC_SECTIONS = [
       { name: "التقارير", url: "https://ictsru.github.io/Report/SRU-ICTD-Report-Template.html", icon: "file-chart-column", ar: true },
       { name: "نموذج مقابلة", url: "https://ictsru.github.io/INTV/intv.html", icon: "user-check", ar: true },
       { name: "الخطة التشغيلية", url: "https://ictsru.github.io/operation/operational-plan-form.html", icon: "calendar-range", ar: true },
+      { name: "SOP", url: "https://ictsru.github.io/SOP", icon: "file-cog", note: "نموذج الإجراء التشغيلي القياسي", isNew: true },
       { name: "Risk Register", url: "https://melmahdy-2030.github.io/AI2030/risk_register_dynamic_response_plan.html", icon: "shield-alert", note: "سجل المخاطر" },
       { name: "Task Manager", url: "https://melmahdy-2030.github.io/AI2030/task_list_web_page.html", icon: "kanban-square", note: "إدارة المهام" }
     ]

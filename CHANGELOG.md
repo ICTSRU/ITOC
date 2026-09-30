@@ -1,5 +1,9 @@
 # Changelog — ITOC Index
 
+## [1.3] — 2026-09-30
+### Added
+- SOP link (https://ictsru.github.io/SOP) in the "أدوات وتطبيقات ITOC" section, marked "جديد". Total links: 63.
+
 ## [1.2] — 2026-09-29
 ### Changed
 - ITOC logo in the page header made smaller (desktop 92px → 68px, mobile 64px → 50px).
