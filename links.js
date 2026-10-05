@@ -17,7 +17,7 @@
 
 window.ITOC_SECTIONS = [
   {
-    id: "ictd", title: "أدوات وتطبيقات ITOC", subtitle: "النماذج والتطبيقات التي طورتها إدارة العمليات التقنية",
+    id: "ictd", title: "أدوات وتطبيقات ITOC", subtitle: "النماذج والتطبيقات التي طورتها الإدارة التنفيذية للاتصالات وتقنية المعلومات - التشغيل",
     icon: "wrench",
     links: [
       { name: "Inventory", url: "https://ictsru.github.io/ICTD/sru_infrastructure_inventory.html", icon: "boxes", note: "جرد أصول البنية التحتية" },

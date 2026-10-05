@@ -1,5 +1,9 @@
 # Changelog — ITOC Index
 
+## [1.5] — 2026-10-05
+### Changed
+- "أدوات وتطبيقات ITOC" section subtitle now reads: "النماذج والتطبيقات التي طورتها الإدارة التنفيذية للاتصالات وتقنية المعلومات - التشغيل".
+
 ## [1.4] — 2026-10-05
 ### Added
 - Daily Check link (https://ictsru.github.io/daily/) in the "أدوات وتطبيقات ITOC" section, next to Weekly Report, marked "جديد". Total links: 64.
