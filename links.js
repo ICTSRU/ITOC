@@ -22,6 +22,7 @@ window.ITOC_SECTIONS = [
     links: [
       { name: "Inventory", url: "https://ictsru.github.io/ICTD/sru_infrastructure_inventory.html", icon: "boxes", note: "جرد أصول البنية التحتية" },
       { name: "Weekly Report", url: "https://ictsru.github.io/ictd-weekly-report/", icon: "clipboard-list", note: "التقرير الأسبوعي للإدارة" },
+      { name: "Daily Check", url: "https://ictsru.github.io/daily/", icon: "activity", note: "تقرير الفحص اليومي", isNew: true },
       { name: "تسجيل حادث عرضي", url: "https://ictsru.github.io/IR/incident-report-ar.html", icon: "siren", ar: true, note: "نموذج تقرير حادثة" },
       { name: "محضر الاجتماع", url: "https://ictsru.github.io/mom/", icon: "file-text", ar: true },
       { name: "منشئ الشهادات", url: "https://ictsru.github.io/template/", icon: "award", ar: true },
