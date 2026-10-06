@@ -1,5 +1,9 @@
 # Changelog — ITOC Index
 
+## [1.6] — 2026-10-06
+### Changed
+- Task Manager link updated from melmahdy-2030.github.io/AI2030/task_list_web_page.html to https://ictsru.github.io/ittask/.
+
 ## [1.5] — 2026-10-05
 ### Changed
 - "أدوات وتطبيقات ITOC" section subtitle now reads: "النماذج والتطبيقات التي طورتها الإدارة التنفيذية للاتصالات وتقنية المعلومات - التشغيل".
