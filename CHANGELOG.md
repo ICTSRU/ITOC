@@ -1,5 +1,9 @@
 # Changelog — ITOC Index
 
+## [1.7] — 2026-10-07
+### Added
+- ICTD Policies link (https://ictsru.github.io/Policy/) in the "أدوات وتطبيقات ITOC" section, after SOP, marked "جديد". Total links: 65.
+
 ## [1.6] — 2026-10-06
 ### Changed
 - Task Manager link updated from melmahdy-2030.github.io/AI2030/task_list_web_page.html to https://ictsru.github.io/ittask/.

@@ -30,6 +30,7 @@ window.ITOC_SECTIONS = [
       { name: "نموذج مقابلة", url: "https://ictsru.github.io/INTV/intv.html", icon: "user-check", ar: true },
       { name: "الخطة التشغيلية", url: "https://ictsru.github.io/operation/operational-plan-form.html", icon: "calendar-range", ar: true },
       { name: "SOP", url: "https://ictsru.github.io/SOP", icon: "file-cog", note: "نموذج الإجراء التشغيلي القياسي", isNew: true },
+      { name: "ICTD Policies", url: "https://ictsru.github.io/Policy/", icon: "scroll-text", note: "سياسات الإدارة المعتمدة", isNew: true },
       { name: "Risk Register", url: "https://melmahdy-2030.github.io/AI2030/risk_register_dynamic_response_plan.html", icon: "shield-alert", note: "سجل المخاطر" },
       { name: "Task Manager", url: "https://ictsru.github.io/ittask/", icon: "kanban-square", note: "إدارة المهام" }
     ]
