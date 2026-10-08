@@ -2,7 +2,7 @@
 
 Single entry point to every SRU system, service, form and ICTD-built tool — maintained by the IT Operations Center (ITOC), Executive Directorate of Communications & Information Technology, Sulaiman Al Rajhi University.
 
-**Current version:** 1.7 (shown in the page footer)
+**Current version:** 1.8 (shown in the page footer)
 
 ## Repository structure
 ```
@@ -13,6 +13,10 @@ assets/
   ictd-logo.png         ICTD logo (header band, left)
   itoc-logo.png         ITOC logo (hero + favicon)
   vendor/lucide.min.js  Icon library (bundled so the page works on the internal network)
+brand/
+  sru-brand.js          Shared header + footer for ALL ICTD/ITOC forms (SRU Brand Kit)
+  README.md             How to add the brand kit to a form
+  example.html          Working example
 CHANGELOG.md            Change record
 .nojekyll               Tells GitHub Pages to serve files as-is
 ```
@@ -22,6 +26,15 @@ CHANGELOG.md            Change record
 2. Upload the **contents** of this folder to the repository root (Add file → Upload files) and commit.
 3. Settings → Pages → Source: *Deploy from a branch* → Branch `main` / `(root)` → Save.
 4. After ~1 minute the page is live at `https://ictsru.github.io/ITOC/`.
+
+## Shared brand kit (header & footer for all forms)
+Every ICTD/ITOC form loads one file:
+```html
+<script src="https://ictsru.github.io/ITOC/brand/sru-brand.js"
+        data-form-title="Form name" data-form-version="v1.0" defer></script>
+```
+It adds the SRU + ICTD logo header and the footer with the ITOC logo linked to the forms hub, using the logos in `assets/`.
+Replace a logo in `assets/` or edit `brand/sru-brand.js` once → every form updates. Details: `brand/README.md`.
 
 ## Add / edit / remove a link
 1. Open `links.js` on GitHub → pencil icon (Edit).
