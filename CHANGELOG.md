@@ -1,10 +1,8 @@
 # Changelog — ITOC Index
 
-## [1.8] — 2026-10-08
+## [1.8] — 2026-10-12
 ### Added
-- **SRU Brand Kit v1.0** (`brand/sru-brand.js`): one shared header (SRU logo right, ICTD logo left) and footer (form name + version, ITOC logo bottom-left linked to the forms hub) for all ICTD/ITOC forms, loaded with a single `<script>` line. Uses the logos in `assets/`, so a logo or layout change is made once for every form.
-- `brand/README.md` usage guide and `brand/example.html` working example.
-- First form on the kit: ICTD Policy Template v1.8 (`ictsru/Policy`).
+- "منصة الفعاليات" link (https://ictsru.github.io/Event/index.html) in the "أدوات وتطبيقات ITOC" section, after ICTD Policies, marked "جديد". Total links: 66.
 
 ## [1.7] — 2026-10-07
 ### Added
