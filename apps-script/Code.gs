@@ -10,7 +10,7 @@
  * =====================================================================
  */
 
-const APP_VERSION    = '2.0';
+const APP_VERSION    = '2.1';
 const ALLOWED_DOMAIN = 'sr.edu.sa';
 const SHEET_SECTIONS = 'Sections';
 const SHEET_LINKS    = 'Links';
