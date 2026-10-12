@@ -1,7 +1,7 @@
 /**
  * =====================================================================
  *  ITOC — Systems & Services Index (فهرس الأنظمة والخدمات)
- *  Version 2.0 — Google Apps Script Web App, restricted to @sr.edu.sa
+ *  Version 2.5 — Google Apps Script Web App, @sr.edu.sa + access list (AllowedUsers)
  *  ICTD — Sulaiman Al Rajhi University
  * ---------------------------------------------------------------------
  *  Files in this project:  Code.gs · Index.html · Logos.html · Denied.html
@@ -10,13 +10,40 @@
  * =====================================================================
  */
 
-const APP_VERSION    = '2.2';
+const APP_VERSION    = '2.5';
 const ALLOWED_DOMAIN = 'sr.edu.sa';
 const SHEET_SECTIONS = 'Sections';
 const SHEET_LINKS    = 'Links';
 const CACHE_KEY      = 'itoc_data_v2';
 const CACHE_SECONDS  = 600;   // page data cached 10 minutes; any sheet edit clears it
 const FAVICON_URL    = 'https://ictsru.github.io/ITOC/assets/itoc-logo.png'; // set '' to disable
+const APP_NAME       = 'فهرس الأنظمة والخدمات';
+const APP_NAME_EN    = 'ITOC Index';
+
+/* Access list (who may open the page) */
+const ACCESS_MODE           = 'LIST';     // 'LIST' = only active emails in AllowedUsers · 'DOMAIN' = any @sr.edu.sa account
+const ACCESS_SPREADSHEET_ID = '';         // '' = this spreadsheet
+const SHEET_ACCESS          = 'AllowedUsers';
+const OWNER_EMAILS          = ['m.elmahdy@sr.edu.sa']; // always allowed — owner can never be locked out
+
+/* Default access list — added to AllowedUsers by setupAccessList() (existing rows are kept) */
+const DEFAULT_ALLOWED = [
+  // [email, name, role, notes]
+  ['nabounar@sr.edu.sa',    'Nasser Abounar', 'admin', 'CIO'],
+  ['m.elmahdy@sr.edu.sa',   'Mohamed ElMahdy', 'admin', 'Owner — IT Operations Manager'],
+  ['n.nawaz@sr.edu.sa',     '', 'user', ''],
+  ['m.omar@sr.edu.sa',      '', 'user', ''],
+  ['m.saleh@sr.edu.sa',     '', 'user', ''],
+  ['a.alrowedan@sr.edu.sa', '', 'user', ''],
+  ['n.alrashidi@sr.edu.sa', '', 'user', ''],
+  ['a.alawaji@sr.edu.sa',   '', 'user', ''],
+  ['a.alaqeel@sr.edu.sa',   '', 'user', ''],
+  ['a.alolayan@sr.edu.sa',  '', 'user', ''],
+  ['s.albusayli@sr.edu.sa', '', 'user', ''],
+  ['i.almutairi@sr.edu.sa', '', 'user', ''],
+  ['a.elnadi@sr.edu.sa',    '', 'user', '']
+];
+const ACCESS_CACHE_SECONDS  = 120;        // edits in the sheet apply at once; other changes within 2 minutes
 
 /* Access log */
 const SHEET_LOG          = 'AccessLog';
@@ -33,11 +60,14 @@ const LINK_HEADERS    = ['section_id', 'name', 'url', 'icon', 'note', 'new', 'hi
 function doGet() {
   const email = String(Session.getActiveUser().getEmail() || '').toLowerCase();
 
-  // Defence in depth: the deployment itself is limited to the sr.edu.sa domain,
-  // and the page is only rendered for an @sr.edu.sa account.
-  if (!email || !email.endsWith('@' + ALLOWED_DOMAIN)) {
-    logAccess_(email || '(unknown)', 'denied');
-    return HtmlService.createTemplateFromFile('Denied').evaluate()
+  // Defence in depth: the deployment is limited to the sr.edu.sa domain, the page is only
+  // rendered for an @sr.edu.sa account, and (ACCESS_MODE 'LIST') only for active AllowedUsers.
+  const status = accessStatus_(email);
+  if (status !== 'ok') {
+    logAccess_(email || '(unknown)', status === 'list' ? 'not-listed' : 'denied');
+    const d = HtmlService.createTemplateFromFile('Denied');
+    d.appName = APP_NAME; d.appNameEn = APP_NAME_EN; d.userEmail = email || ''; d.reason = status;
+    return d.evaluate()
       .setTitle('ITOC | غير مصرح')
       .addMetaTag('viewport', 'width=device-width, initial-scale=1');
   }
@@ -61,6 +91,89 @@ function include(name) {
   return HtmlService.createHtmlOutputFromFile(name).getContent();
 }
 
+function isAllowed_(email) { return !!email && email.endsWith('@' + ALLOWED_DOMAIN); }
+
+/* ---------------------------- Access list --------------------------- */
+
+const ACCESS_HEADERS = ['email', 'name', 'role', 'active', 'notes'];
+
+/** 'ok' | 'domain' (not @sr.edu.sa) | 'list' (not on the active list) */
+function accessStatus_(email) {
+  if (!isAllowed_(email)) return 'domain';
+  if (ACCESS_MODE !== 'LIST') return 'ok';
+  if (OWNER_EMAILS.map(e => e.toLowerCase()).indexOf(email) !== -1) return 'ok';
+  return allowedEmails_().indexOf(email) !== -1 ? 'ok' : 'list';
+}
+
+/** Active emails from the AllowedUsers tab (cached briefly). */
+function allowedEmails_() {
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get('acl_v1');
+  if (hit) return JSON.parse(hit);
+  let list = [];
+  try {
+    const sh = accessSheet_(false);
+    if (sh && sh.getLastRow() > 1) {
+      list = sh.getRange(2, 1, sh.getLastRow() - 1, 4).getValues()
+        .filter(r => r[0] && r[3] !== false && String(r[3]).toUpperCase() !== 'FALSE')
+        .map(r => String(r[0]).trim().toLowerCase());
+    }
+  } catch (e) { console.error('allowedEmails_ failed: ' + e); }
+  cache.put('acl_v1', JSON.stringify(list), ACCESS_CACHE_SECONDS);
+  return list;
+}
+
+function accessSheet_(create) {
+  const ss = ACCESS_SPREADSHEET_ID ? SpreadsheetApp.openById(ACCESS_SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(SHEET_ACCESS);
+  if (!sh && create) {
+    sh = ss.insertSheet(SHEET_ACCESS);
+    sh.getRange(1, 1, 1, ACCESS_HEADERS.length).setValues([ACCESS_HEADERS])
+      .setFontWeight('bold').setFontColor('#ffffff').setBackground('#501e8c');
+    sh.setFrozenRows(1);
+    sh.setRightToLeft(true);
+    [260, 200, 100, 70, 260].forEach((w, i) => sh.setColumnWidth(i + 1, w));
+    sh.getRange(2, 4, 300, 1).insertCheckboxes();
+    sh.getRange('A1').setNote('البريد الجامعي كاملًا — name@sr.edu.sa');
+    sh.getRange('C1').setNote('admin / user (للتوثيق — يمكن استخدامه لاحقًا لصلاحيات أدق)');
+    sh.getRange('D1').setNote('ألغِ العلامة لإيقاف الوصول دون حذف الصف');
+  }
+  return sh;
+}
+
+/** Run once from the editor: creates the AllowedUsers tab and adds the owner(s). */
+function setupAccessList() {
+  const sh = accessSheet_(true);
+  const n = Math.max(sh.getLastRow() - 1, 0);            // includes empty rows that only hold checkboxes
+  const data = n ? sh.getRange(2, 1, n, 5).getValues() : [];
+
+  // Keep every existing entry (and its active state), compacted to the top — fixes rows that
+  // earlier versions appended below the pre-made checkbox rows.
+  const kept = data.filter(r => String(r[0]).trim())
+    .map(r => [String(r[0]).trim(), r[1], r[2], r[3] === true || String(r[3]).toUpperCase() === 'TRUE', r[4]]);
+  const have = kept.map(r => r[0].toLowerCase());
+
+  const seed = OWNER_EMAILS.map(e => [e, 'Owner', 'admin', 'owner'])
+    .concat(typeof DEFAULT_ALLOWED !== 'undefined' ? DEFAULT_ALLOWED : []);
+  let added = 0;
+  seed.forEach(r => {
+    const e = String(r[0]).trim().toLowerCase();
+    if (e && have.indexOf(e) === -1) {
+      kept.push([e, r[1] || '', r[2] || 'user', true, r[3] || 'added by setupAccessList']);
+      have.push(e); added++;
+    }
+  });
+
+  if (n) sh.getRange(2, 1, n, 5).clearContent();
+  const rows = Math.max(n, kept.length, 50);
+  sh.getRange(2, 4, rows, 1).insertCheckboxes();          // checkboxes first (this sets them to unchecked)
+  if (kept.length) sh.getRange(2, 1, kept.length, 5).setValues(kept);  // then the real values
+
+  CacheService.getScriptCache().remove('acl_v1');
+  console.log('AllowedUsers ready: ' + kept.length + ' entries (' + added + ' added).');
+  try { SpreadsheetApp.getActive().toast('قائمة المصرّح لهم جاهزة: ' + kept.length + ' بريدًا (أُضيف ' + added + ').', SHEET_ACCESS, 8); } catch (e) {}
+}
+
 /* ---------------------------- Access log ---------------------------- */
 
 /** Appends one row to AccessLog. Never blocks the page if logging fails. */
@@ -75,7 +188,7 @@ function logAccess_(email, result) {
     const sh = getLogSheet_();
     const now = new Date();
     const f = p => Utilities.formatDate(now, LOG_TIMEZONE, p);
-    sh.appendRow([now, f('yyyy-MM-dd'), f('HH:mm:ss'), DAYS_AR_[Number(f('u')) % 7], email, result === 'granted' ? 'دخول' : 'مرفوض', APP_VERSION]);
+    sh.appendRow([now, f('yyyy-MM-dd'), f('HH:mm:ss'), DAYS_AR_[Number(f('u')) % 7], email, result === 'granted' ? 'دخول' : (result === 'not-listed' ? 'غير مدرج' : 'مرفوض'), APP_VERSION]);
   } catch (e) {
     console.error('logAccess_ failed: ' + e);
   }
@@ -191,6 +304,8 @@ function onOpen() {
     .addItem('إعداد الجداول وتعبئة الروابط (أول مرة)', 'setupSheets')
     .addItem('تحديث الصفحة الآن (مسح الذاكرة المؤقتة)', 'clearCache')
     .addSeparator()
+    .addItem('إعداد قائمة المصرّح لهم (AllowedUsers)', 'setupAccessList')
+    .addSeparator()
     .addItem('ملخص سجل الدخول (30 يومًا)', 'showLogSummary')
     .addItem('حذف سجلات الدخول القديمة', 'purgeOldLogs')
     .addSeparator()
@@ -200,7 +315,7 @@ function onOpen() {
 
 /** Simple trigger: any edit in the sheet refreshes the page data. */
 function onEdit() {
-  CacheService.getScriptCache().remove(CACHE_KEY);
+  CacheService.getScriptCache().removeAll([CACHE_KEY, 'acl_v1']);
 }
 
 function clearCache() {

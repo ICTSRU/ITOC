@@ -1,5 +1,25 @@
 # Changelog — ITOC Index
 
+## [2.5] — 2026-10-12
+### Fixed
+- setupAccessList wrote e-mails after the 300 pre-made checkbox rows (row 302+), so the list looked empty. It now writes from row 2, compacts any rows misplaced by the previous version back to the top, and keeps every existing entry and its active state.
+
+## [2.4] — 2026-10-12
+### Added
+- Default access list (`DEFAULT_ALLOWED`, 13 ICTD accounts incl. the CIO) — menu ITOC → "إعداد قائمة المصرّح لهم" adds any that are missing; existing rows and their active/inactive state are kept.
+### Changed
+- `Code.gs` only.
+
+## [2.3] — 2026-10-12
+### Added
+- **Access list:** only active e-mails in the new sheet tab `AllowedUsers` (email, name, role, active, notes) can open the index; `OWNER_EMAILS` (m.elmahdy@sr.edu.sa) is always allowed.
+- Menu ITOC → "إعداد قائمة المصرّح لهم (AllowedUsers)" creates the tab and adds the owner.
+- Editing the sheet applies immediately (cache cleared on edit); otherwise within 2 minutes.
+- Not-listed accounts see "الوصول مقيّد" with their e-mail; logged as `غير مدرج` in AccessLog.
+- `ACCESS_MODE = 'DOMAIN'` returns to v2.2 behaviour (any @sr.edu.sa account).
+### Changed
+- `Code.gs` and `Denied.html` only. GitHub landing page unchanged (v2.1).
+
 ## [2.2] — 2026-10-12
 ### Added
 - **Access log:** every sign-in is recorded in a new sheet `AccessLog` (created automatically on first visit): timestamp, date, time (Asia/Riyadh), day, e-mail, result (دخول / مرفوض), app version.
