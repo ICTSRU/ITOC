@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="version" content="2.0">
+<title>ITOC | فهرس الأنظمة والخدمات</title>
+<link rel="icon" type="image/png" href="assets/itoc-logo.png">
+<script>
+  /* ▼ ضع هنا رابط تطبيق الويب بعد النشر (Deploy ▸ Web app URL) ▼ */
+  var WEB_APP_URL = "PASTE_WEB_APP_URL_HERE";
+  if (/^https:\/\/script\.google\.com\//.test(WEB_APP_URL)) location.replace(WEB_APP_URL);
+</script>
+<style>
+  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f7f5fb;color:#241436;font-family:"Cairo",Tahoma,Arial,sans-serif;padding:16px;box-sizing:border-box}
+  .box{max-width:440px;width:100%;background:#fff;border:1px solid rgba(80,30,140,.12);border-top:4px solid #501e8c;border-radius:4px;padding:26px 22px;text-align:center}
+  img{height:56px} p{color:#6b5a80;line-height:1.7}
+  a.btn{display:inline-block;background:#501e8c;color:#fff;text-decoration:none;padding:9px 20px;border-radius:4px;font-weight:700}
+  small{display:block;margin-top:14px;color:#8a7c9c;font-family:Arial,sans-serif}
+</style>
+</head>
+<body>
+  <div class="box">
+    <img src="assets/itoc-logo.png" alt="ITOC">
+    <p>يتم تحويلك إلى فهرس الأنظمة والخدمات… الدخول بحساب Google الجامعي <b dir="ltr">@sr.edu.sa</b>.</p>
+    <a class="btn" id="go" href="#">فتح الفهرس</a>
+    <small>v2.0</small>
+  </div>
+  <script>document.getElementById("go").href = WEB_APP_URL;</script>
+</body>
+</html>

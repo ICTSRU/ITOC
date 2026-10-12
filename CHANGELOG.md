@@ -1,47 +1,34 @@
 # Changelog — ITOC Index
 
+## [2.0] — 2026-10-12
+### Changed (major)
+- Page moved from public GitHub Pages to a **Google Apps Script Web App** restricted to Google Workspace accounts on **sr.edu.sa** (Google sign-in with university e-mail and password).
+- Server-side check: the page is rendered only for `@sr.edu.sa` accounts; others see an "access restricted" page.
+- Links now live in a **Google Sheet** (`Sections`, `Links`) instead of `links.js` — add/edit/hide a link by editing a row; no GitHub commit or new version needed.
+- Signed-in user e-mail shown in the top bar.
+- GitHub repository now holds only a redirect page (`github-redirect/`) — `links.js` and internal URLs removed from the public repo.
+### Added
+- `ITOC` menu in the sheet: one-click setup that creates and fills both sheets with all 66 links (v1.8 content), cache refresh, show web-app URL.
+- `hidden` checkbox to hide a link temporarily without deleting it; section dropdown on each link row.
+- 10-minute data cache for speed, cleared automatically on any sheet edit.
+### Unchanged
+- Design, sections, search, keyboard shortcuts, internal-network badges, "جديد" badge.
+
 ## [1.8] — 2026-10-12
-### Added
-- "منصة الفعاليات" link (https://ictsru.github.io/Event/index.html) in the "أدوات وتطبيقات ITOC" section, after ICTD Policies, marked "جديد". Total links: 66.
-
+- Added "منصة الفعاليات" (https://ictsru.github.io/Event/index.html). Total links: 66.
 ## [1.7] — 2026-10-07
-### Added
-- ICTD Policies link (https://ictsru.github.io/Policy/) in the "أدوات وتطبيقات ITOC" section, after SOP, marked "جديد". Total links: 65.
-
+- Added ICTD Policies (https://ictsru.github.io/Policy/).
 ## [1.6] — 2026-10-06
-### Changed
-- Task Manager link updated from melmahdy-2030.github.io/AI2030/task_list_web_page.html to https://ictsru.github.io/ittask/.
-
+- Task Manager link → https://ictsru.github.io/ittask/.
 ## [1.5] — 2026-10-05
-### Changed
-- "أدوات وتطبيقات ITOC" section subtitle now reads: "النماذج والتطبيقات التي طورتها الإدارة التنفيذية للاتصالات وتقنية المعلومات - التشغيل".
-
+- ITOC Tools subtitle updated.
 ## [1.4] — 2026-10-05
-### Added
-- Daily Check link (https://ictsru.github.io/daily/) in the "أدوات وتطبيقات ITOC" section, next to Weekly Report, marked "جديد". Total links: 64.
-
+- Added Daily Check (https://ictsru.github.io/daily/).
 ## [1.3] — 2026-09-30
-### Added
-- SOP link (https://ictsru.github.io/SOP) in the "أدوات وتطبيقات ITOC" section, marked "جديد". Total links: 63.
-
+- Added SOP (https://ictsru.github.io/SOP).
 ## [1.2] — 2026-09-29
-### Changed
-- ITOC logo in the page header made smaller (desktop 92px → 68px, mobile 64px → 50px).
-
+- Smaller ITOC logo.
 ## [1.1] — 2026-09-29
-### Changed
-- Removed the "ITOC —" prefix from the page heading; heading now reads "فهرس الأنظمة والخدمات" (ITOC logo remains beside it).
-
+- Removed "ITOC —" prefix from the heading.
 ## [1.0] — 2026-09-29
-### Added
-- First release of the ITOC Systems & Services Index, built from *SRU Systems & Services Links v1.2*.
-- 62 links in 8 sections: ITOC Tools, General & Productivity, Staff Services, Student Services, AI Tools, Ministry of Education, Under Test, Forms.
-- New titled section **أدوات وتطبيقات ITOC** grouping the ICTD-built apps (Inventory, Weekly Report, Incident Report, MoM, Certificate Builder, Reports, Interview, Operational Plan) plus Risk Register and Task Manager.
-- Data-driven design: all links in `links.js`; page renders sections, navbar and counters automatically.
-- Search with keyboard shortcuts, internal-network badges, host shown under each link, print stylesheet.
-- Official header band (SRU logo right, ICTD logo left) and ITOC logo; SRU brand tokens (purple #501e8c / #3a1464, blue #0a6eaa, Cairo font).
-- Lucide icons bundled locally (v1.48.0) — no dependency on external CDN for icons.
-
-### Changed (vs. source v1.2)
-- Risk Register and Task Manager moved from General Services to ITOC Tools.
-- Removed ~1.4 MB of embedded base64 images; logos are now separate files in `assets/`.
+- First release: 62 links in 8 sections from SRU Systems & Services Links v1.2.

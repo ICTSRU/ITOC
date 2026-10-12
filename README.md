@@ -1,45 +1,52 @@
-# ITOC — Systems & Services Index (فهرس الأنظمة والخدمات)
+# ITOC — Systems & Services Index · v2.0
+**Access:** Google sign-in, Sulaiman Al Rajhi University accounts (@sr.edu.sa) only.
+**Data:** Google Sheet · **Hosting:** Google Apps Script Web App · **Old GitHub link:** redirects to the new page.
 
-Single entry point to every SRU system, service, form and ICTD-built tool — maintained by the IT Operations Center (ITOC), Executive Directorate of Communications & Information Technology, Sulaiman Al Rajhi University.
-
-**Current version:** 1.8 (shown in the page footer)
-
-## Repository structure
+## Package contents
 ```
-index.html              Page layout, styling and logic (rarely needs editing)
-links.js                ALL links live here — edit this file to update the index
-assets/
-  sru-logo.png          University logo (header band, right)
-  ictd-logo.png         ICTD logo (header band, left)
-  itoc-logo.png         ITOC logo (hero + favicon)
-  vendor/lucide.min.js  Icon library (bundled so the page works on the internal network)
-CHANGELOG.md            Change record
-.nojekyll               Tells GitHub Pages to serve files as-is
+apps-script/
+  Code.gs        Server logic: domain check, reads the sheet, cache, ITOC menu, setup + seed data (66 links)
+  Index.html     The page (same design as v1.8)
+  Logos.html     SRU, ICTD and ITOC logos (embedded)
+  Denied.html    Shown to non-@sr.edu.sa accounts
+github-redirect/
+  index.html     Replaces the GitHub page; forwards to the web app
+  assets/itoc-logo.png  (favicon)
+  .nojekyll
 ```
 
-## Publish on GitHub Pages (one-time)
-1. Create a repository, e.g. `ictsru/ITOC` (Public).
-2. Upload the **contents** of this folder to the repository root (Add file → Upload files) and commit.
-3. Settings → Pages → Source: *Deploy from a branch* → Branch `main` / `(root)` → Save.
-4. After ~1 minute the page is live at `https://ictsru.github.io/ITOC/`.
+## Setup (one time, ~10 minutes) — use your @sr.edu.sa account
+1. **Create the sheet:** Google Drive → New → Google Sheets → name it `ITOC Index Links`.
+2. **Open Apps Script:** Extensions → Apps Script. Rename the project `ITOC Index`.
+3. **Add the files:**
+   - Replace the content of `Code.gs` with `apps-script/Code.gs`.
+   - Click **+ → HTML** three times and create `Index`, `Logos`, `Denied` (no extension), pasting each file's content.
+   - Save (Ctrl+S).
+4. **Fill the sheet:** go back to the sheet and reload it. A new menu **ITOC** appears → **إعداد الجداول وتعبئة الروابط (أول مرة)** → approve the permission prompt (first run only) → the `Sections` and `Links` sheets are created with all 66 links.
+5. **Publish:** in Apps Script → **Deploy → New deployment** → type **Web app**:
+   - Description: `ITOC v2.0`
+   - Execute as: **Me**
+   - Who has access: **Anyone within Sulaiman Al Rajhi University**
+   - Deploy → copy the **Web app URL**.
+6. **Redirect the old link:** in the GitHub repo `ictsru/ITOC`, delete `links.js` and `assets/vendor/`, upload the contents of `github-redirect/`, and paste the Web app URL into `WEB_APP_URL` in `index.html`.
 
-## Add / edit / remove a link
-1. Open `links.js` on GitHub → pencil icon (Edit).
-2. Inside the section you want, add a line:
-   ```js
-   { name: "New System", url: "https://example.sr.edu.sa/", icon: "globe" },
-   ```
-   Optional: `ar: true` (Arabic label), `note: "وصف قصير"`, `isNew: true` (shows **جديد** badge).
-3. Icons: any name from <https://lucide.dev/icons>.
-4. Commit → the live page updates automatically.
+> The sheet stays private to you. Staff only see the page, never the sheet. To let colleagues edit links, share the sheet with them as **Editor**.
 
-To add a whole section, copy an existing `{ id: ..., title: ..., links: [...] }` block; the navbar, counters and search pick it up automatically.
+## Everyday use — editing links (no code, no GitHub)
+| Task | In the `Links` sheet |
+|---|---|
+| Add a link | New row: choose `section_id`, type `name`, `url`, optional `icon` (lucide.dev/icons) and `note` |
+| Mark as new | Tick `new` |
+| Hide temporarily | Tick `hidden` |
+| Reorder | Move the row (the page follows the sheet order) |
+| Add a section | New row in `Sections` (id, title, subtitle, icon) |
 
-## Built-in features
-- Instant search by name, description or URL — press `/` to focus, `Enter` opens the first result, `Esc` clears.
-- Links on private IP ranges (10.x, 172.16–31.x, 192.168.x) or single-word hosts are auto-badged **شبكة داخلية** (internal network only).
-- Live counters (total links, sections, internal links); sticky section navbar with active-section highlight.
-- Responsive (mobile → desktop), RTL, SRU visual identity, print-friendly (URLs printed under each card).
+Changes show up on the next page refresh (edits clear the cache automatically; otherwise use **ITOC → تحديث الصفحة الآن**).
 
-## Versioning
-Semantic single-digit minor: 1.0 → 1.1 … 1.9 → 2.0. On each release update the footer version in `index.html`, the `<meta name="version">` tag, and add an entry to `CHANGELOG.md`.
+## Updating the code later
+Edit the file in Apps Script, then **Deploy → Manage deployments → ✏️ → Version: New version → Deploy**. The URL stays the same.
+
+## Security notes
+- Google enforces sign-in, and the deployment is limited to the sr.edu.sa domain. `Code.gs` also checks the e-mail domain before rendering anything.
+- Passwords are entered on Google's own sign-in page only; the app never sees them.
+- **Old commits** of the public GitHub repo still contain `links.js` (v1.0–v1.8). To remove internal URLs from public history, delete and recreate the `ITOC` repo with only the redirect files.
