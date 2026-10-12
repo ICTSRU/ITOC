@@ -1,5 +1,14 @@
 # Changelog — ITOC Index
 
+## [2.2] — 2026-10-12
+### Added
+- **Access log:** every sign-in is recorded in a new sheet `AccessLog` (created automatically on first visit): timestamp, date, time (Asia/Riyadh), day, e-mail, result (دخول / مرفوض), app version.
+- Repeated opens by the same user within 30 minutes count as one entry (`LOG_DEDUP_MINUTES`; set 0 to log every open).
+- ITOC menu: "ملخص سجل الدخول (30 يومًا)" (visits, unique users, top 10) and "حذف سجلات الدخول القديمة" (older than 180 days, `LOG_RETENTION_DAYS`).
+- Logging never blocks the page if the sheet write fails.
+### Changed
+- Only `apps-script/Code.gs` changed; GitHub landing page unchanged (v2.1).
+
 ## [2.1] — 2026-10-12
 ### Added
 - ITOC sign-in landing page on GitHub (`ictsru.github.io/ITOC`): explains that access is with the university e-mail (@sr.edu.sa), then the "تسجيل الدخول بحساب الجامعة" button opens Google sign-in.

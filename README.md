@@ -1,4 +1,4 @@
-# ITOC — Systems & Services Index · v2.1
+# ITOC — Systems & Services Index · v2.2
 **Access:** Google sign-in, Sulaiman Al Rajhi University accounts (@sr.edu.sa) only.
 **Data:** Google Sheet · **Hosting:** Google Apps Script Web App · **Old GitHub link:** redirects to the new page.
 
@@ -42,6 +42,11 @@ github-redirect/
 | Add a section | New row in `Sections` (id, title, subtitle, icon) |
 
 Changes show up on the next page refresh (edits clear the cache automatically; otherwise use **ITOC → تحديث الصفحة الآن**).
+
+## Access log (v2.2)
+Sheet `AccessLog` — one row per sign-in: `timestamp | date | time | day | email | result | version`.
+Same user within 30 min = one row. Menu ITOC → ملخص سجل الدخول / حذف سجلات الدخول القديمة.
+Keep the spreadsheet private (it contains staff e-mails).
 
 ## Updating the code later
 Edit the file in Apps Script, then **Deploy → Manage deployments → ✏️ → Version: New version → Deploy**. The URL stays the same.

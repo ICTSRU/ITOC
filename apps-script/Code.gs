@@ -10,13 +10,20 @@
  * =====================================================================
  */
 
-const APP_VERSION    = '2.1';
+const APP_VERSION    = '2.2';
 const ALLOWED_DOMAIN = 'sr.edu.sa';
 const SHEET_SECTIONS = 'Sections';
 const SHEET_LINKS    = 'Links';
 const CACHE_KEY      = 'itoc_data_v2';
 const CACHE_SECONDS  = 600;   // page data cached 10 minutes; any sheet edit clears it
 const FAVICON_URL    = 'https://ictsru.github.io/ITOC/assets/itoc-logo.png'; // set '' to disable
+
+/* Access log */
+const SHEET_LOG          = 'AccessLog';
+const LOG_TIMEZONE       = 'Asia/Riyadh';
+const LOG_DEDUP_MINUTES  = 30;   // same user within 30 min = one entry (0 = log every page open)
+const LOG_RETENTION_DAYS = 180;  // used by the menu item that deletes old entries
+const LOG_HEADERS        = ['timestamp', 'date', 'time', 'day', 'email', 'result', 'version'];
 
 const SECTION_HEADERS = ['id', 'title', 'subtitle', 'icon', 'hidden'];
 const LINK_HEADERS    = ['section_id', 'name', 'url', 'icon', 'note', 'new', 'hidden'];
@@ -29,10 +36,13 @@ function doGet() {
   // Defence in depth: the deployment itself is limited to the sr.edu.sa domain,
   // and the page is only rendered for an @sr.edu.sa account.
   if (!email || !email.endsWith('@' + ALLOWED_DOMAIN)) {
+    logAccess_(email || '(unknown)', 'denied');
     return HtmlService.createTemplateFromFile('Denied').evaluate()
       .setTitle('ITOC | غير مصرح')
       .addMetaTag('viewport', 'width=device-width, initial-scale=1');
   }
+
+  logAccess_(email, 'granted');
 
   const t = HtmlService.createTemplateFromFile('Index');
   t.dataJson  = safeJson_(getData_());
@@ -49,6 +59,76 @@ function doGet() {
 /** Used by templates: <?!= include('Logos') ?> */
 function include(name) {
   return HtmlService.createHtmlOutputFromFile(name).getContent();
+}
+
+/* ---------------------------- Access log ---------------------------- */
+
+/** Appends one row to AccessLog. Never blocks the page if logging fails. */
+function logAccess_(email, result) {
+  try {
+    if (LOG_DEDUP_MINUTES > 0 && result === 'granted') {
+      const cache = CacheService.getScriptCache();
+      const key = 'log_' + email;
+      if (cache.get(key)) return;
+      cache.put(key, '1', LOG_DEDUP_MINUTES * 60);
+    }
+    const sh = getLogSheet_();
+    const now = new Date();
+    const f = p => Utilities.formatDate(now, LOG_TIMEZONE, p);
+    sh.appendRow([now, f('yyyy-MM-dd'), f('HH:mm:ss'), DAYS_AR_[Number(f('u')) % 7], email, result === 'granted' ? 'دخول' : 'مرفوض', APP_VERSION]);
+  } catch (e) {
+    console.error('logAccess_ failed: ' + e);
+  }
+}
+
+const DAYS_AR_ = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت']; // index = ISO day % 7
+
+function getLogSheet_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(SHEET_LOG);
+  if (!sh) {
+    sh = ss.insertSheet(SHEET_LOG);
+    sh.getRange(1, 1, 1, LOG_HEADERS.length).setValues([LOG_HEADERS])
+      .setFontWeight('bold').setFontColor('#ffffff').setBackground('#3a1464');
+    sh.setFrozenRows(1);
+    sh.setRightToLeft(true);
+    sh.getRange('A:A').setNumberFormat('yyyy-mm-dd hh:mm:ss');
+    [170, 100, 80, 80, 260, 80, 70].forEach((w, i) => sh.setColumnWidth(i + 1, w));
+  }
+  return sh;
+}
+
+/** Menu: delete entries older than LOG_RETENTION_DAYS. */
+function purgeOldLogs() {
+  const sh = getLogSheet_();
+  const last = sh.getLastRow();
+  let removed = 0;
+  if (last > 1) {
+    const cutoff = new Date(Date.now() - LOG_RETENTION_DAYS * 864e5);
+    const stamps = sh.getRange(2, 1, last - 1, 1).getValues();
+    for (let i = stamps.length - 1; i >= 0; i--) {
+      if (stamps[i][0] instanceof Date && stamps[i][0] < cutoff) { sh.deleteRow(i + 2); removed++; }
+    }
+  }
+  SpreadsheetApp.getActive().toast('حُذف ' + removed + ' سجل أقدم من ' + LOG_RETENTION_DAYS + ' يومًا.', 'ITOC', 6);
+}
+
+/** Menu: quick summary of the last 30 days. */
+function showLogSummary() {
+  const sh = getLogSheet_();
+  const last = sh.getLastRow();
+  const ui = SpreadsheetApp.getUi();
+  if (last < 2) { ui.alert('سجل الدخول', 'لا توجد سجلات بعد.', ui.ButtonSet.OK); return; }
+  const since = new Date(Date.now() - 30 * 864e5);
+  const rows = sh.getRange(2, 1, last - 1, LOG_HEADERS.length).getValues()
+    .filter(r => r[0] instanceof Date && r[0] >= since && r[5] === 'دخول');
+  const users = {};
+  rows.forEach(r => { users[r[4]] = (users[r[4]] || 0) + 1; });
+  const top = Object.keys(users).sort((a, b) => users[b] - users[a]).slice(0, 10)
+    .map((u, i) => (i + 1) + '. ' + u + ' — ' + users[u]).join('\n');
+  ui.alert('سجل الدخول — آخر 30 يومًا',
+    'عدد الزيارات: ' + rows.length + '\nعدد المستخدمين: ' + Object.keys(users).length + '\n\nالأكثر دخولًا:\n' + (top || '—'),
+    ui.ButtonSet.OK);
 }
 
 /* ------------------------------- Data ------------------------------- */
@@ -110,6 +190,9 @@ function onOpen() {
   SpreadsheetApp.getUi().createMenu('ITOC')
     .addItem('إعداد الجداول وتعبئة الروابط (أول مرة)', 'setupSheets')
     .addItem('تحديث الصفحة الآن (مسح الذاكرة المؤقتة)', 'clearCache')
+    .addSeparator()
+    .addItem('ملخص سجل الدخول (30 يومًا)', 'showLogSummary')
+    .addItem('حذف سجلات الدخول القديمة', 'purgeOldLogs')
     .addSeparator()
     .addItem('عرض رابط الصفحة', 'showWebAppUrl')
     .addToUi();
