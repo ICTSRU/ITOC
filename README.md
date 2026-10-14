@@ -1,4 +1,4 @@
-# ITOC — Systems & Services Index · v2.5
+# ITOC — Systems & Services Index · v2.6
 **Access:** Google sign-in, Sulaiman Al Rajhi University accounts (@sr.edu.sa) only.
 **Data:** Google Sheet · **Hosting:** Google Apps Script Web App · **Old GitHub link:** redirects to the new page.
 

@@ -1,5 +1,14 @@
 # Changelog — ITOC Index
 
+## [2.6] — 2026-10-14
+### Changed
+- **Shared logos replaced with the official files** in `assets/` — the single source for every ICTD/ITOC platform (Brand Kit, SRU Voice, and future apps):
+  - `sru-logo.png` — official Sulaiman Alrajhi University logo, now with a transparent background (827×136).
+  - `ictd-logo.png` — official ICTD logo (400×148, transparent).
+  - `itoc-logo.png` — official ITOC wordmark, sharper (640×237, transparent).
+- File names unchanged, so every form and platform that links to `https://ictsru.github.io/ITOC/assets/…` picks up the new logos automatically.
+- `Code.gs`: version number only.
+
 ## [2.5] — 2026-10-12
 ### Fixed
 - setupAccessList wrote e-mails after the 300 pre-made checkbox rows (row 302+), so the list looked empty. It now writes from row 2, compacts any rows misplaced by the previous version back to the top, and keeps every existing entry and its active state.
