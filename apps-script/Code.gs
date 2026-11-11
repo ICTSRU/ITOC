@@ -432,6 +432,7 @@ function onOpen() {
     .addSeparator()
     .addItem('ترقية الجداول إلى v3.1 (مرة واحدة)', 'upgradeTo31')
     .addItem('ترقية الجداول إلى v3.2 (الاسم العربي / الإنجليزي)', 'upgradeTo32')
+    .addItem('إضافة الروابط الحكومية إلى «روابط مفيدة» (DGA·NCA·NELC·SDAIA)', 'addUsefulGovLinks')
     .addItem('تفعيل المهام الآلية (الحالة + التقرير الأسبوعي)', 'setupAutomation')
     .addItem('فحص حالة الروابط الآن', 'checkServicesMenu_')
     .addItem('إرسال التقرير الأسبوعي الآن (تجربة)', 'sendWeeklyReport')

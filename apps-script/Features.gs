@@ -593,3 +593,75 @@ function removeTriggers_() {
   });
   return n;
 }
+
+/* ---- v3.4 one-click: add the four government links into the live «روابط مفيدة» section ---- */
+const USEFUL_GOV_LINKS = [
+  ['هيئة الحكومة الرقمية', 'Digital Government Authority', 'https://dga.gov.sa', 'landmark', 'هيئة الحكومة الرقمية (DGA)'],
+  ['الهيئة الوطنية للأمن السيبراني', 'National Cybersecurity Authority', 'https://nca.gov.sa', 'shield-check', 'الهيئة الوطنية للأمن السيبراني (NCA)'],
+  ['المركز الوطني للتعليم الإلكتروني', 'National eLearning Center', 'https://nelc.gov.sa', 'graduation-cap', 'المركز الوطني للتعليم الإلكتروني (NELC)'],
+  ['الهيئة السعودية للبيانات والذكاء الاصطناعي', 'Saudi Data & AI Authority', 'https://sdaia.gov.sa', 'cpu', 'الهيئة السعودية للبيانات والذكاء الاصطناعي (SDAIA)']
+];
+
+/** First empty row in a sheet, judged by its key column (ignores pre-inserted checkbox rows). */
+function firstFreeRow_(sh, keyCol) {
+  const n = sh.getLastRow();
+  if (n < 2) return 2;
+  const col = sh.getRange(2, keyCol, n - 1, 1).getValues();
+  let last = 1;
+  for (let i = 0; i < col.length; i++) if (String(col[i][0]).trim() !== '') last = i + 2;
+  return last + 1;
+}
+
+function headerRow_(sh) {
+  return sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), 1)).getValues()[0].map(h => String(h).trim().toLowerCase());
+}
+
+/** Menu: idempotently add the four gov links to the «روابط مفيدة» section of the current sheet. */
+function addUsefulGovLinks() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ui = SpreadsheetApp.getUi();
+  const lnk = ss.getSheetByName(SHEET_LINKS), sec = ss.getSheetByName(SHEET_SECTIONS);
+  if (!lnk || !sec) { ui.alert('ITOC', 'شغّل «إعداد الجداول» أولًا.', ui.ButtonSet.OK); return; }
+  try { ensureColumns_(); } catch (e) {}
+
+  // find or create the «روابط مفيدة» section
+  let secId = '';
+  const srows = readTable_(sec);
+  const hit = srows.find(r => String(r.id).trim() === 'useful'
+      || String(r.title).trim() === 'روابط مفيدة'
+      || String(r.title_en || '').trim().toLowerCase() === 'useful links');
+  if (hit) {
+    secId = String(hit.id).trim();
+  } else {
+    const SH = headerRow_(sec), row = new Array(SH.length).fill('');
+    const set = (k, v) => { const i = SH.indexOf(k); if (i > -1) row[i] = v; };
+    set('id', 'useful'); set('title', 'روابط مفيدة');
+    set('subtitle', 'روابط وأدوات ومنصات خارجية مفيدة لمنسوبي الإدارة'); set('icon', 'bookmark');
+    set('hidden', false); set('title_en', 'Useful Links'); set('subtitle_en', 'Handy external platforms and tools for the department');
+    sec.getRange(firstFreeRow_(sec, 1), 1, 1, SH.length).setValues([row]);
+    secId = 'useful';
+  }
+
+  // append links whose URL is not already present
+  const H = headerRow_(lnk);
+  const have = readTable_(lnk).map(r => String(r.url).trim());
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const toAdd = USEFUL_GOV_LINKS.filter(l => have.indexOf(l[2]) === -1);
+  if (toAdd.length) {
+    const rows = toAdd.map(l => {
+      const row = new Array(H.length).fill('');
+      const set = (k, v) => { const i = H.indexOf(k); if (i > -1) row[i] = v; };
+      set('section_id', secId); set('name', l[0]); set('name_en', l[1]); set('url', l[2]);
+      set('icon', l[3]); set('note', l[4]); set('new', false); set('hidden', false);
+      set('featured', false); set('added_on', today); set('note_en', '');
+      return row;
+    });
+    lnk.getRange(firstFreeRow_(lnk, 1), 1, rows.length, H.length).setValues(rows);
+  }
+  CacheService.getScriptCache().removeAll([CACHE_KEY, TOP_CACHE_KEY]);
+  ui.alert('ITOC v' + APP_VERSION,
+    toAdd.length ? ('أُضيفت ' + toAdd.length + ' روابط إلى قسم «روابط مفيدة»:\n• ' + toAdd.map(l => l[0]).join('\n• ') +
+                    '\n\nحدّث صفحة ITOC لتظهر.')
+                 : 'الروابط الأربعة موجودة مسبقًا — لا جديد يُضاف.',
+    ui.ButtonSet.OK);
+}
