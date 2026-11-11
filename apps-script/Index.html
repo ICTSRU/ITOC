@@ -75,6 +75,15 @@ main{padding:10px 0 40px}
 .card .ic{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:var(--radius);background:var(--purple-light);color:var(--purple)}
 .card .ic svg{width:19px;height:19px}
 .section[data-id="ictd"] .card .ic{background:var(--blue-light);color:var(--blue)}
+/* v2.7 — الأكثر استخدامًا */
+.section.top{background:linear-gradient(135deg,#fff8eb,#fff 55%);border:1px solid #f3dfb5;border-radius:12px;padding:16px 16px 18px}
+.section.top .section-icon{background:linear-gradient(135deg,#e0a010,#c98a00)}
+.section.top .card{border-color:#f0e2c4}
+.section.top .card .ic{background:#fff4e0;color:#b77900}
+.section.top .card:hover{border-color:#c98a00}
+.rank{position:absolute;top:-8px;inset-inline-start:8px;min-width:20px;height:20px;border-radius:999px;background:#c98a00;color:#fff;font:700 .7rem Arial,sans-serif;display:grid;place-items:center;padding:0 6px}
+.rank.pin{background:var(--purple)}
+.rank svg{width:11px;height:11px}
 .card .txt{min-width:0;display:flex;flex-direction:column}
 .card strong{font-size:.95rem;font-weight:700;line-height:1.35}
 .card strong[dir=ltr]{font-family:Arial,"Cairo",sans-serif;text-align:right;unicode-bidi:isolate}
@@ -107,11 +116,199 @@ footer .ver{font-family:Arial,sans-serif;background:rgba(255,255,255,.12);paddin
 @media print{
   .sticky,.search,.empty{display:none!important}
   body{background:#fff}.card{break-inside:avoid;box-shadow:none}
-  .card .host{display:block}
 }
+
+/* v2.8 — side menu (desktop ≥ 1024px); phones keep the top navbar */
+.side{display:none}
+.side .logo{background:#fff;border-radius:14px;padding:10px;display:grid;place-items:center;margin-bottom:18px}
+.side .logo img{height:54px;width:auto;display:block}
+.side .label{font-size:.75rem;opacity:.65;margin:2px 10px 8px}
+.side nav a{display:flex;align-items:center;gap:10px;color:#e9e0f7;text-decoration:none;padding:9px 12px;border-radius:10px;font-weight:600;font-size:.92rem;margin-bottom:2px;transition:background .15s,opacity .15s}
+.side nav a svg{width:18px;height:18px;flex:none;opacity:.85}
+.side nav a .n{margin-inline-start:auto;font:700 .72rem Arial,sans-serif;background:rgba(255,255,255,.14);padding:1px 8px;border-radius:999px}
+.side nav a:hover{background:rgba(255,255,255,.10);color:#fff}
+.side nav a.active{background:rgba(255,255,255,.16);color:#fff;box-shadow:inset -3px 0 0 #8fd3f4}
+.side nav a.top-link svg{color:#ffcf66;opacity:1}
+.side nav a.dim{opacity:.4}
+.side .me{margin-top:auto;display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:.8rem;background:rgba(0,0,0,.2);padding:10px 12px;border-radius:10px;direction:ltr;word-break:break-all}
+.side .me svg{width:18px;height:18px;flex:none}
+@media (min-width:1024px){
+  body.has-side{padding-inline-start:268px}
+  .side{display:flex;flex-direction:column;position:fixed;top:0;bottom:0;inset-inline-start:0;width:268px;z-index:30;
+        background:linear-gradient(180deg,#2b0f4d,#3a1464 40%,#501e8c);color:#fff;padding:18px 14px;overflow-y:auto;scrollbar-width:thin}
+  body.has-side .navbar{display:none}
+  body.has-side .topbar .user{display:none}
+  body.has-side .hero .itoc{display:none}
+  body.has-side .hero .container{grid-template-columns:1fr}
+}
+@media print{.side{display:none!important}body.has-side{padding:0}}
+
+/* v3.0 — section panels with a coloured header strip (colour per section, set as --sc by the script) */
+body{background:#eceaf2}
+#sections > .section:not(.top):not(.favs){background:#fff;border-radius:14px;margin-top:22px;overflow:hidden;box-shadow:0 4px 16px rgba(58,20,100,.07);padding:0 16px 18px}
+#sections > .section:not(.top):not(.favs) .section-head{margin:0 -16px 16px;padding:12px 16px;background:linear-gradient(90deg,var(--sc),color-mix(in srgb,var(--sc) 75%,#000));color:#fff}
+#sections > .section:not(.top):not(.favs) .section-head h2{color:#fff}
+#sections > .section:not(.top):not(.favs) .section-head p{color:rgba(255,255,255,.85)}
+#sections > .section:not(.top):not(.favs) .section-icon{background:rgba(255,255,255,.18)}
+#sections > .section:not(.top):not(.favs) .section-head .count{background:rgba(255,255,255,.2);color:#fff}
+#sections > .section:not(.top):not(.favs) .card{background:#faf9fc}
+#sections > .section:not(.top):not(.favs) .card .ic{background:color-mix(in srgb,var(--sc) 12%,#fff);color:var(--sc)}
+#sections > .section:not(.top):not(.favs) .card:hover{border-color:var(--sc)}
+#sections > .section.top{margin-top:22px}
+.side nav a[style] svg{color:color-mix(in srgb,var(--sc) 45%,#fff);opacity:1}
+@media print{body{background:#fff}#sections > .section:not(.top):not(.favs){box-shadow:none;border:1px solid #ddd}}
+
+/* ===================== v3.1 ===================== */
+/* top tools (stats · language · theme) */
+.tools{display:flex;align-items:center;gap:6px}
+.tool{display:inline-grid;place-items:center;min-width:36px;height:36px;padding:0 8px;border:1px solid rgba(255,255,255,.25);border-radius:8px;background:rgba(255,255,255,.08);color:#fff;font:700 .8rem Arial,"Cairo",sans-serif;cursor:pointer;text-decoration:none}
+.tool:hover,.tool:focus-visible{background:rgba(255,255,255,.2);outline:none}
+.tool svg{width:18px;height:18px}
+.side .admin{display:flex;align-items:center;gap:10px;color:#ffe3a3;text-decoration:none;padding:9px 12px;border-radius:10px;font-weight:700;font-size:.9rem;margin-top:10px;border:1px dashed rgba(255,227,163,.45)}
+.side .admin:hover{background:rgba(255,255,255,.1)}
+.side .admin svg{width:18px;height:18px}
+
+/* announcements */
+#ann:empty{display:none}
+#ann{padding-top:14px}
+.ann{display:flex;align-items:flex-start;gap:10px;border-radius:10px;padding:10px 14px;margin-bottom:8px;border:1px solid;font-size:.92rem;font-weight:600}
+.ann svg{width:20px;height:20px;flex:none;margin-top:2px}
+.ann p{margin:0;flex:1}
+.ann button{border:0;background:transparent;color:inherit;cursor:pointer;opacity:.7;padding:2px;border-radius:6px;display:grid;place-items:center}
+.ann button:hover{opacity:1;background:rgba(0,0,0,.06)}
+.ann-info{background:#e6f3fa;border-color:#b5d9ee;color:#06486f}
+.ann-warning{background:#fff4e0;border-color:#f0d19c;color:#7a4700}
+.ann-danger{background:#fdecea;border-color:#f3b8b2;color:#8e1d14}
+.ann-success{background:#e8f5e9;border-color:#b5dcb8;color:#1b5e20}
+
+/* card wrapper + actions (favourite ⭐ · report 🚩) */
+.cw{position:relative;display:flex;min-width:0}
+.cw > .card{flex:1;min-width:0;padding-inline-end:34px}
+.card .ext{display:none}
+.acts{position:absolute;inset-inline-end:6px;top:50%;transform:translateY(-50%);margin-top:5px;display:flex;flex-direction:column;gap:2px;z-index:2}
+.act{width:24px;height:24px;border:0;background:transparent;border-radius:6px;color:#9d8fb3;display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .15s,background .15s,color .15s}
+.act svg{width:15px;height:15px}
+.cw:hover .act,.cw:focus-within .act,.act.on{opacity:1}
+.act:hover,.act:focus-visible{background:var(--purple-light);color:var(--purple);outline:none}
+.act.fav.on{color:#d99a00}
+.act.fav.on svg{fill:currentColor}
+.act.rep:hover{color:#c62828}
+@media (hover:none){.act{opacity:.55}.act.on{opacity:1}}
+
+/* service status dot on the icon */
+.card .ic{position:relative}
+.sdot{position:absolute;bottom:-3px;inset-inline-end:-3px;width:11px;height:11px;border-radius:50%;border:2px solid var(--card);background:#9e9e9e}
+.sdot.s-up{background:#2e7d32}
+.sdot.s-down{background:#c62828}
+.sdot.s-broken{background:#e65100}
+.legend{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%}
+
+/* favourites section */
+.section.favs{background:linear-gradient(135deg,#fdf6ff,#fff 55%);border:1px solid #e5d6f5;border-radius:12px;padding:16px 16px 18px;margin-top:22px}
+.section.favs .section-icon{background:linear-gradient(135deg,#d99a00,#b77900)}
+.section.favs .hint{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.9rem;padding:6px 2px}
+.section.favs .hint svg{width:16px;height:16px;color:#d99a00}
+.side nav a.fav-link svg{color:#ffcf66;opacity:1;fill:#ffcf66}
+
+/* report dialog + toast */
+dialog.rep{border:0;border-radius:14px;padding:0;width:min(440px,92vw);box-shadow:0 20px 50px rgba(0,0,0,.3);background:var(--card);color:var(--ink)}
+dialog.rep::backdrop{background:rgba(20,8,40,.45)}
+dialog.rep form{padding:18px}
+dialog.rep h3{margin:0 0 4px;font-size:1.05rem;color:var(--purple-dark);display:flex;align-items:center;gap:8px}
+dialog.rep h3 svg{width:18px;height:18px;color:#c62828}
+dialog.rep p{margin:0 0 10px;color:var(--muted);font-size:.88rem}
+dialog.rep textarea{width:100%;min-height:90px;font:inherit;font-size:.9rem;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}
+dialog.rep .row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.btn{font:700 .88rem "Cairo",sans-serif;border-radius:8px;padding:7px 16px;border:1px solid var(--border);background:transparent;color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--purple);border-color:var(--purple);color:#fff}
+#toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,30px);background:#241436;color:#fff;padding:9px 18px;border-radius:999px;font-size:.88rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* v3.2 — two-line button: Arabic name on top, English name below */
+.card .txt strong{font-size:.93rem;line-height:1.3}
+.card .en{font:600 .8rem/1.35 Arial,"Cairo",sans-serif;color:var(--muted);text-align:right;unicode-bidi:isolate;letter-spacing:.01em}
+[dir=ltr] .card .en,[dir=ltr] .card .txt strong{text-align:left}
+
+/* English (LTR) adjustments */
+[dir=ltr] .card strong[dir=ltr]{text-align:left}
+[dir=ltr] .side nav a.active{box-shadow:inset 3px 0 0 #8fd3f4}
+[dir=ltr] .side .me{justify-content:flex-start}
+[dir=ltr] .search input{padding:9px 44px 9px 40px}
+
+/* Dark mode — the white header band is kept so both logos stay legible */
+[data-theme=dark]{--bg:#15111c;--card:#201a2b;--ink:#ece6f5;--muted:#ab9fc0;--border:rgba(200,180,240,.16);--purple-light:#2c2340;--purple-dark:#d7c6f4;--blue-light:#16324a}
+[data-theme=dark] body{background:#110d17}
+[data-theme=dark] .navbar{background:#2c1a4d}
+[data-theme=dark] .search input{background:#2a2338;color:var(--ink)}
+[data-theme=dark] .search kbd{background:#1a1424}
+[data-theme=dark] .chip{background:var(--card)}
+[data-theme=dark] .hero h1 .en{color:#7cc4ee}
+[data-theme=dark] #sections > .section:not(.top):not(.favs){background:#1a1523;box-shadow:0 4px 16px rgba(0,0,0,.35)}
+[data-theme=dark] #sections > .section:not(.top):not(.favs) .card{background:#231d2f}
+[data-theme=dark] #sections > .section:not(.top):not(.favs) .card .ic{background:color-mix(in srgb,var(--sc) 28%,#1a1523);color:color-mix(in srgb,var(--sc) 45%,#fff)}
+[data-theme=dark] #sections > .section:not(.top):not(.favs) .card:hover{border-color:color-mix(in srgb,var(--sc) 60%,#fff)}
+[data-theme=dark] .section.top{background:linear-gradient(135deg,#2b2212,#1a1523 60%);border-color:#4a3a17}
+[data-theme=dark] .section.top .card{background:#231d2f;border-color:#3d3220}
+[data-theme=dark] .section.top .card .ic{background:#3a2d12;color:#ffcf66}
+[data-theme=dark] .section.favs{background:linear-gradient(135deg,#271d38,#1a1523 60%);border-color:#3b2d55}
+[data-theme=dark] .section.favs .card{background:#231d2f}
+[data-theme=dark] .card:hover{box-shadow:0 4px 14px rgba(0,0,0,.4)}
+[data-theme=dark] .card .ic{color:#cdb8f5}
+[data-theme=dark] .section.favs .card .ic{background:#2c2340}
+[data-theme=dark] .empty{background:var(--card)}
+[data-theme=dark] .hero .itoc{background:#fff}
+[data-theme=dark] .badge.int{background:#3a2a10;color:#ffcf66;border-color:#5c4419}
+[data-theme=dark] .act{color:#8d80a3}
+[data-theme=dark] .act:hover,[data-theme=dark] .act:focus-visible{background:#2c2340;color:#e2d4fa}
+[data-theme=dark] .ann-info{background:#0f2a3d;border-color:#1d4a68;color:#bfe3f8}
+[data-theme=dark] .ann-warning{background:#33250b;border-color:#5c4419;color:#ffdc9a}
+[data-theme=dark] .ann-danger{background:#3a1512;border-color:#6b2a24;color:#ffc2bb}
+[data-theme=dark] .ann-success{background:#13301a;border-color:#2b5a33;color:#bfe8c4}
+@media (max-width:760px){.tool{min-width:32px;height:32px;padding:0 6px}.topbar .container{gap:8px}}
 </style>
+<!-- SRU Brand Kit v1.0 — https://ictsru.github.io/brand/ (if unreachable the page keeps its own purple) -->
+<link rel="stylesheet" href="https://ictsru.github.io/brand/css/sru-shell.css">
+<link rel="stylesheet" href="https://ictsru.github.io/brand/css/sru-tech-bg.css">
+<style>
+/* v3.3 — SRU Brand Kit applied: 40px logos · tech-network header band · branded footer */
+.band img,.band .ictd{height:40px}
+@media (max-width:480px){.band img,.band .ictd{height:32px}}
+.topbar.sru-tech-bg-dark{background:#3a1464 linear-gradient(110deg,#3a1464 0%,#2e2a80 100%)}
+.hero{padding:0;color:#fff;position:relative}
+.hero::after{content:"";position:absolute;inset:auto 0 0 0;height:6px;background:var(--blue)}
+.hero .container{padding-top:30px;padding-bottom:36px}
+.hero h1{color:#fff}
+.hero p{color:rgba(255,255,255,.92)}
+.hero .chip{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff}
+.hero .chip b{color:#fff}
+.hero .itoc{border:0;border-radius:4px;padding:8px 12px}
+.hero .itoc img{height:60px}
+body.has-side .hero .itoc{display:block}
+body.has-side .hero .container{grid-template-columns:1fr auto}
+.diag{display:none}
+#ann{padding-top:18px}
+.side{background:#3a1464 linear-gradient(180deg,#3a1464 0%,#2e2a80 100%)!important}
+.site-footer{font-size:.85rem}
+.site-footer .copy{color:#e6dcf5;text-align:center;flex:1;min-width:220px}
+.site-footer .ver{font-family:Arial,sans-serif;background:rgba(255,255,255,.14);padding:0 8px;border-radius:3px}
+.site-footer .in{max-width:1240px}
+@media (max-width:760px){.hero .itoc{display:none}.hero .container{grid-template-columns:1fr}}
+[data-theme=dark] .hero .chip{background:rgba(255,255,255,.1)}
+</style>
+<script>try{var _t=localStorage.getItem("itoc_theme");if(_t==="dark")document.documentElement.setAttribute("data-theme","dark");if(localStorage.getItem("itoc_lang")==="en"){document.documentElement.lang="en";document.documentElement.dir="ltr";}}catch(e){}</script>
+
 </head>
-<body>
+<body class="has-side">
+
+<!-- v2.8 side menu -->
+<aside class="side" aria-label="الأقسام">
+  <div class="logo"><img data-logo="itoc" alt="ITOC — IT Operations Center"></div>
+  <div class="label" data-i18n="sections">الأقسام</div>
+  <nav id="sideNav"></nav>
+  <? if (isAdmin && statsUrl) { ?><a class="admin" href="<?= statsUrl ?>" target="_top"><i data-lucide="chart-column"></i><span data-i18n="stats">الإحصاءات (للمشرفين)</span></a><? } ?>
+  <div class="me"><span><?= userEmail ?></span><i data-lucide="circle-user-round"></i></div>
+</aside>
 
 <!-- Official header band -->
 <div class="band">
@@ -122,14 +319,19 @@ footer .ver{font-family:Arial,sans-serif;background:rgba(255,255,255,.12);paddin
 </div>
 
 <div class="sticky">
-  <header class="topbar">
+  <header class="topbar sru-tech-bg-dark">
     <div class="container">
-      <div class="brand"><span>ITOC</span><small>مركز العمليات التقنية</small></div>
+      <div class="brand"><span>ITOC</span><small data-i18n="brand">مركز العمليات التقنية</small></div>
       <label class="search">
         <i data-lucide="search"></i>
         <input id="q" type="search" placeholder="ابحث باسم النظام أو الرابط…" aria-label="بحث في الروابط" autocomplete="off">
         <kbd>/</kbd>
       </label>
+      <div class="tools">
+        <? if (isAdmin && statsUrl) { ?><a class="tool" id="statsBtn" href="<?= statsUrl ?>" target="_top" title="الإحصاءات"><i data-lucide="chart-column"></i></a><? } ?>
+        <button class="tool" id="langBtn" type="button" title="English">EN</button>
+        <button class="tool" id="themeBtn" type="button" title="الوضع الداكن"><i data-lucide="moon"></i></button>
+      </div>
       <span class="user" title="مسجّل الدخول بحساب الجامعة"><i data-lucide="circle-user-round"></i><span dir="ltr"><?= userEmail ?></span></span>
     </div>
   </header>
@@ -137,42 +339,102 @@ footer .ver{font-family:Arial,sans-serif;background:rgba(255,255,255,.12);paddin
   <div class="diag"></div>
 </div>
 
-<section class="hero">
+<section class="hero sru-tech-bg">
   <div class="container">
     <div>
-      <h1>فهرس الأنظمة والخدمات</h1>
-      <p>نقطة وصول موحدة لجميع الأنظمة الجامعية والخدمات والنماذج والأدوات التي تديرها وتطورها الإدارة التنفيذية للاتصالات وتقنية المعلومات.</p>
+      <h1 data-i18n="title">فهرس الأنظمة والخدمات</h1>
+      <p data-i18n="intro">نقطة وصول موحدة لجميع الأنظمة الجامعية والخدمات والنماذج والأدوات التي تديرها وتطورها الإدارة التنفيذية للاتصالات وتقنية المعلومات.</p>
       <div class="stats" id="stats"></div>
     </div>
     <div class="itoc"><img data-logo="itoc" alt="ITOC — IT Operations Center"></div>
   </div>
 </section>
 
+<div class="container" id="ann" role="region" aria-label="إعلانات"></div>
+
 <main class="container">
-  <div class="empty" id="empty">لا توجد روابط مطابقة لعبارة البحث.</div>
+  <div class="empty" id="empty" data-i18n="empty">لا توجد روابط مطابقة لعبارة البحث.</div>
   <div id="sections"></div>
 </main>
 
-<footer>
-  <div class="container">
-    <div>مركز العمليات التقنية <b dir="ltr">ITOC</b> — الإدارة التنفيذية للاتصالات وتقنية المعلومات — جامعة سليمان الراجحي © 2026</div>
-    <div>الإصدار <span class="ver" dir="ltr">v<?= version ?></span></div>
-  </div>
-</footer>
+<footer class="site-footer sru-footer sru-tech-bg-dark"><div class="in">
+  <div class="sru-support"><b>For Support:</b> Dial <span class="star" aria-label="star">*</span> <span class="or">or</span> Send email to: <a href="mailto:servicedesk@sr.edu.sa">servicedesk@sr.edu.sa</a></div>
+  <div class="copy"><span data-i18n-html="footer">مركز العمليات التقنية <b dir="ltr">ITOC</b> — الإدارة التنفيذية للاتصالات وتقنية المعلومات — جامعة سليمان الراجحي © 2026</span> · <span data-i18n="version">الإصدار</span> <span class="ver" dir="ltr">v<?= version ?></span></div>
+  <a class="sru-itoc" href="https://ictsru.github.io/ITOC/#forms" target="_blank" rel="noopener" title="ITOC — IT Operations Center"><img data-logo="itoc" alt="ITOC — IT Operations Center"></a>
+</div></footer>
+
+<dialog class="rep" id="repDlg">
+  <form method="dialog" id="repForm">
+    <h3><i data-lucide="flag"></i><span data-i18n="repTitle">الإبلاغ عن رابط لا يعمل</span></h3>
+    <p id="repName"></p>
+    <textarea id="repNote" maxlength="500" placeholder="ما المشكلة؟ (اختياري)"></textarea>
+    <div class="row">
+      <button class="btn" value="cancel" type="submit" data-i18n="cancel">إلغاء</button>
+      <button class="btn primary" value="send" type="submit" data-i18n="send">إرسال البلاغ</button>
+    </div>
+  </form>
+</dialog>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <?!= include('Logos') ?>
 <script>
   [].forEach.call(document.querySelectorAll("img[data-logo]"), function(img){ img.src = ITOC_LOGOS[img.getAttribute("data-logo")] || ""; });
   window.ITOC_SECTIONS = <?!= dataJson ?>;
+  window.ITOC_TOP = <?!= topJson ?>;
+  window.ITOC_FAVS = <?!= favJson ?>;
+  window.ITOC_ANN = <?!= annJson ?>;
+  window.ITOC_STATUS = <?!= statusJson ?>;
 </script>
 <script src="https://unpkg.com/lucide@1.48.0/dist/umd/lucide.min.js"></script>
 <script>
 (function(){
   "use strict";
-  var SECTIONS = window.ITOC_SECTIONS || [];
+  var SECTIONS = window.ITOC_SECTIONS || [], TOP = window.ITOC_TOP || [];
+  var FAVS = (window.ITOC_FAVS || []).slice(), ANN = window.ITOC_ANN || [], STATUS = window.ITOC_STATUS || {};
   var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+  var store = {
+    get: function(k){ try { return window.localStorage.getItem(k); } catch (e) { return null; } },
+    set: function(k, v){ try { window.localStorage.setItem(k, v); } catch (e) {} }
+  };
+  var run = function(){ return (window.google && google.script && google.script.run) ? google.script.run : null; };
 
-  // Internal-network detection: private IPv4 ranges or single-label hostnames
+  /* ----------------------------- i18n ----------------------------- */
+  var T = {
+    ar: { sections:"الأقسام", stats:"الإحصاءات (للمشرفين)", brand:"مركز العمليات التقنية", title:"فهرس الأنظمة والخدمات",
+          intro:"نقطة وصول موحدة لجميع الأنظمة الجامعية والخدمات والنماذج والأدوات التي تديرها وتطورها الإدارة التنفيذية للاتصالات وتقنية المعلومات.",
+          empty:"لا توجد روابط مطابقة لعبارة البحث.", version:"الإصدار",
+          footer:'مركز العمليات التقنية <b dir="ltr">ITOC</b> — الإدارة التنفيذية للاتصالات وتقنية المعلومات — جامعة سليمان الراجحي © 2026',
+          search:"ابحث باسم النظام أو الرابط…", searchLabel:"بحث في الروابط",
+          links:"رابط", secs:"أقسام", internal:"على الشبكة الداخلية", up:"متاح", down:"متوقف", broken:"الرابط غير موجود",
+          favs:"مفضلتي", favsSub:"روابطك المفضلة — تظهر لك وحدك على أي جهاز", favHint:"اضغط النجمة ☆ على أي بطاقة لإضافتها إلى مفضلتك.",
+          top:"الأكثر استخدامًا", topSub:"الروابط المثبّتة والأكثر فتحًا خلال آخر 30 يومًا", pinned:"مثبّت", times:" مرة خلال 30 يومًا",
+          intBadge:"شبكة داخلية", intTip:"متاح من داخل شبكة الجامعة فقط", newBadge:"جديد",
+          favAdd:"إضافة إلى المفضلة", favDel:"إزالة من المفضلة", report:"الإبلاغ عن رابط لا يعمل",
+          repTitle:"الإبلاغ عن رابط لا يعمل", repNote:"ما المشكلة؟ (اختياري)", cancel:"إلغاء", send:"إرسال البلاغ",
+          sent:"شكرًا — وصل البلاغ إلى فريق التشغيل", dup:"تم استلام بلاغك عن هذا الرابط مسبقًا", failed:"تعذّر الحفظ — حاول مرة أخرى",
+          added:"أُضيف إلى مفضلتك", removed:"أُزيل من مفضلتك", dark:"الوضع الداكن", light:"الوضع الفاتح", langBtn:"EN", langTip:"English",
+          close:"إغلاق", statsTip:"الإحصاءات", annLabel:"إعلانات", checked:"آخر فحص" },
+    en: { sections:"Sections", stats:"Statistics (admins)", brand:"IT Operations Center", title:"Systems & Services Index",
+          intro:"One access point for the university systems, services, forms and tools run and built by the Executive Directorate of Communications & IT.",
+          empty:"No links match your search.", version:"Version",
+          footer:'IT Operations Center <b>ITOC</b> — Executive Directorate of Communications &amp; IT — Sulaiman Al Rajhi University © 2026',
+          search:"Search by system name or link…", searchLabel:"Search links",
+          links:"links", secs:"sections", internal:"internal network", up:"available", down:"down", broken:"link not found",
+          favs:"My favourites", favsSub:"Your own favourite links — on any device", favHint:"Click the star ☆ on any card to add it here.",
+          top:"Most used", topSub:"Pinned links and the most opened in the last 30 days", pinned:"Pinned", times:" opens in 30 days",
+          intBadge:"Internal", intTip:"Available on the university network only", newBadge:"New",
+          favAdd:"Add to favourites", favDel:"Remove from favourites", report:"Report a broken link",
+          repTitle:"Report a broken link", repNote:"What is wrong? (optional)", cancel:"Cancel", send:"Send report",
+          sent:"Thank you — the operations team has your report", dup:"You already reported this link", failed:"Could not save — please try again",
+          added:"Added to favourites", removed:"Removed from favourites", dark:"Dark mode", light:"Light mode", langBtn:"ع", langTip:"العربية",
+          close:"Close", statsTip:"Statistics", annLabel:"Announcements", checked:"Last check" }
+  };
+  var LANG = store.get("itoc_lang") === "en" ? "en" : "ar";
+  var t = function(k){ return (T[LANG] && T[LANG][k]) || T.ar[k] || k; };
+  var secTitle = function(s){ return LANG === "en" && s.title_en ? s.title_en : s.title; };
+  var secSub = function(s){ return LANG === "en" && s.subtitle_en ? s.subtitle_en : s.subtitle; };
+
+  /* ----------------------------- helpers ----------------------------- */
   function isInternal(url){
     try{
       var h = new URL(url).hostname;
@@ -180,80 +442,286 @@ footer .ver{font-family:Arial,sans-serif;background:rgba(255,255,255,.12);paddin
       return h.indexOf(".") === -1;
     }catch(e){ return false; }
   }
-  function host(url){ try{ return new URL(url).host.replace(/^www\./,""); }catch(e){ return url; } }
+  var SEC_COLORS = { ictd:'#501e8c', general:'#0a6eaa', staff:'#0a8a96', students:'#2e7d32', useful:'#00838f',
+                     ai:'#7b3fc4', moe:'#00695c', test:'#b26a00', forms:'#c0392b' };
+  var PALETTE = ['#501e8c','#0a6eaa','#0a8a96','#2e7d32','#7b3fc4','#00695c','#b26a00','#c0392b','#ad1457','#37474f'];
+  function secColor(id, i){ return SEC_COLORS[id] || PALETTE[i % PALETTE.length]; }
+  function isArabic(x){ return /[؀-ۿ]/.test(String(x || "")); }
+  var BY_URL = {};
+  SECTIONS.forEach(function(s){ (s.links || []).forEach(function(l){ if (!BY_URL[l.url]) BY_URL[l.url] = l; }); });
 
-  var nav = document.getElementById("nav"), wrap = document.getElementById("sections");
-  var total = 0, internal = 0, navHtml = "", html = "";
+  function dot(url){
+    if (isInternal(url)) return "";
+    var st = STATUS[url]; if (!st) return "";
+    var label = st.s === "up" ? t("up") : st.s === "broken" ? t("broken") : t("down");
+    return '<span class="sdot s-' + esc(st.s) + '" role="img" aria-label="' + esc(label) + '" title="' + esc(label) + (st.c ? ' · HTTP ' + st.c : '') + '"></span>';
+  }
 
-  SECTIONS.forEach(function(sec){
-    var links = sec.links || [];
-    total += links.length;
-    navHtml += '<a href="#' + esc(sec.id) + '">' + esc(sec.title) + '</a>';
-    html += '<section class="section" id="' + esc(sec.id) + '" data-id="' + esc(sec.id) + '">' +
-      '<div class="section-head"><div class="section-icon"><i data-lucide="' + esc(sec.icon || "folder") + '"></i></div>' +
-      '<div><h2>' + esc(sec.title) + '</h2>' + (sec.subtitle ? '<p>' + esc(sec.subtitle) + '</p>' : '') + '</div>' +
-      '<span class="count"><span data-n>' + links.length + '</span> رابط</span></div><div class="grid">';
-    links.forEach(function(l){
-      var intr = isInternal(l.url); if (intr) internal++;
-      var search = (l.name + " " + (l.note || "") + " " + l.url + " " + sec.title).toLowerCase();
-      html += '<a class="card" href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer" data-s="' + esc(search) + '"' +
-        (intr ? ' title="متاح من داخل شبكة الجامعة فقط"' : '') + '>' +
-        (intr ? '<span class="badge int">شبكة داخلية</span>' : (l.isNew ? '<span class="badge new">جديد</span>' : '')) +
-        '<span class="ic"><i data-lucide="' + esc(l.icon || "link") + '"></i></span>' +
-        '<span class="txt"><strong' + (l.ar ? '' : ' dir="ltr"') + '>' + esc(l.name) + '</strong>' +
-        (l.note ? '<small>' + esc(l.note) + '</small>' : '') +
-        '<span class="host">' + esc(host(l.url)) + '</span></span>' +
-        '<i class="ext" data-lucide="arrow-up-left"></i></a>';
+  function card(l, sTitle, extra){
+    var intr = isInternal(l.url), fav = FAVS.indexOf(l.url) > -1;
+    var note = LANG === "en" && l.note_en ? l.note_en : l.note;
+    var ar = l.name || "", en = l.name_en && l.name_en !== l.name ? l.name_en : "";
+    var search = (ar + " " + en + " " + (l.note || "") + " " + (l.note_en || "") + " " + l.url + " " + sTitle).toLowerCase();
+    var tip = intr ? t("intTip") : (note || "");
+    return '<div class="cw" data-s="' + esc(search) + '" data-url="' + esc(l.url) + '">' +
+      '<a class="card" href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer" data-name="' + esc(ar || en) + '" data-url="' + esc(l.url) + '"' +
+      (tip ? ' title="' + esc(tip) + '"' : '') + '>' + (extra || '') +
+      (intr ? '<span class="badge int">' + t("intBadge") + '</span>' : (l.isNew ? '<span class="badge new">' + t("newBadge") + '</span>' : '')) +
+      '<span class="ic"><i data-lucide="' + esc(l.icon || "link") + '"></i>' + dot(l.url) + '</span>' +
+      '<span class="txt"><strong' + (isArabic(ar) ? '' : ' dir="ltr"') + '>' + esc(ar) + '</strong>' +
+      (en ? '<span class="en" dir="ltr">' + esc(en) + '</span>' : '') + '</span>' +
+      '<i class="ext" data-lucide="arrow-up-left"></i></a>' +
+      '<div class="acts">' +
+        '<button type="button" class="act fav' + (fav ? ' on' : '') + '" data-act="fav" aria-pressed="' + fav + '" title="' + esc(fav ? t("favDel") : t("favAdd")) + '" aria-label="' + esc(fav ? t("favDel") : t("favAdd")) + '"><i data-lucide="star"></i></button>' +
+        '<button type="button" class="act rep" data-act="report" title="' + esc(t("report")) + '" aria-label="' + esc(t("report")) + '"><i data-lucide="flag"></i></button>' +
+      '</div></div>';
+  }
+
+  function sectionHead(icon, title, sub, n){
+    return '<div class="section-head"><div class="section-icon"><i data-lucide="' + esc(icon) + '"></i></div>' +
+      '<div><h2>' + esc(title) + '</h2>' + (sub ? '<p>' + esc(sub) + '</p>' : '') + '</div>' +
+      '<span class="count"><span data-n>' + n + '</span> ' + t("links") + '</span></div>';
+  }
+
+  function favGrid(){
+    var list = FAVS.map(function(u){ return BY_URL[u]; }).filter(Boolean);
+    if (!list.length) return '<div class="hint"><i data-lucide="star"></i>' + esc(t("favHint")) + '</div>';
+    return '<div class="grid">' + list.map(function(l){ return card(l, t("favs")); }).join("") + '</div>';
+  }
+
+  /* ----------------------------- render ----------------------------- */
+  var nav = document.getElementById("nav"), sideNav = document.getElementById("sideNav"), wrap = document.getElementById("sections");
+  var io = null, lockUntil = 0;
+
+  function render(){
+    var total = 0, internal = 0, navHtml = "", sideHtml = "", html = "";
+    var favN = FAVS.filter(function(u){ return BY_URL[u]; }).length;
+
+    // مفضلتي
+    navHtml += '<a href="#my-favs">☆ ' + esc(t("favs")) + '</a>';
+    sideHtml += '<a href="#my-favs" class="fav-link"><i data-lucide="star"></i>' + esc(t("favs")) + '<span class="n" id="favN">' + favN + '</span></a>';
+    html += '<section class="section favs" id="my-favs" data-id="my-favs">' + sectionHead("star", t("favs"), t("favsSub"), favN) +
+      '<div id="favBody">' + favGrid() + '</div></section>';
+
+    // الأكثر استخدامًا
+    if (TOP.length){
+      navHtml += '<a href="#top-used">★ ' + esc(t("top")) + '</a>';
+      sideHtml += '<a href="#top-used" class="top-link"><i data-lucide="flame"></i>' + esc(t("top")) + '<span class="n">' + TOP.length + '</span></a>';
+      html += '<section class="section top" id="top-used" data-id="top-used">' + sectionHead("flame", t("top"), t("topSub"), TOP.length) + '<div class="grid">';
+      var rankNo = 0;
+      TOP.forEach(function(l){
+        var tag = l.featured ? '<span class="rank pin" title="' + esc(t("pinned")) + '"><i data-lucide="pin"></i></span>'
+                : l.suggested ? ''
+                : '<span class="rank" title="' + (l.clicks || 0) + esc(t("times")) + '">' + (++rankNo) + '</span>';
+        html += card(BY_URL[l.url] || l, t("top"), tag);
+      });
+      html += '</div></section>';
+    }
+
+    SECTIONS.forEach(function(sec, si){
+      var links = sec.links || [], sc = secColor(sec.id, si), title = secTitle(sec);
+      total += links.length;
+      navHtml += '<a href="#' + esc(sec.id) + '">' + esc(title) + '</a>';
+      sideHtml += '<a href="#' + esc(sec.id) + '" style="--sc:' + sc + '"><i data-lucide="' + esc(sec.icon || "folder") + '"></i>' + esc(title) + '<span class="n">' + links.length + '</span></a>';
+      html += '<section class="section" id="' + esc(sec.id) + '" data-id="' + esc(sec.id) + '" style="--sc:' + sc + '">' +
+        sectionHead(sec.icon || "folder", title, secSub(sec), links.length) + '<div class="grid">';
+      links.forEach(function(l){ if (isInternal(l.url)) internal++; html += card(l, sec.title + " " + (sec.title_en || "")); });
+      html += '</div></section>';
     });
-    html += '</div></section>';
+
+    nav.innerHTML = navHtml;
+    sideNav.innerHTML = sideHtml;
+    wrap.innerHTML = html;
+
+    // status counts
+    var up = 0, bad = 0;
+    Object.keys(BY_URL).forEach(function(u){ var s = STATUS[u]; if (!s || isInternal(u)) return; if (s.s === "up") up++; else bad++; });
+    document.getElementById("stats").innerHTML =
+      '<span class="chip"><i data-lucide="link"></i><b>' + total + '</b> ' + t("links") + '</span>' +
+      '<span class="chip"><i data-lucide="layers"></i><b>' + SECTIONS.length + '</b> ' + t("secs") + '</span>' +
+      '<span class="chip"><i data-lucide="shield"></i><b>' + internal + '</b> ' + t("internal") + '</span>' +
+      (up + bad ? '<span class="chip" title="' + esc(t("checked")) + '"><span class="legend"><i style="background:#2e7d32"></i><b>' + up + '</b> ' + t("up") + '</span>' +
+                  (bad ? '&nbsp;·&nbsp;<span class="legend"><i style="background:#c62828"></i><b>' + bad + '</b> ' + t("down") + '</span>' : '') + '</span>' : '');
+
+    renderAnn();
+    applyStatic();
+    if (window.lucide) lucide.createIcons();
+    bindObserver();
+    if (q.value) filter();
+  }
+
+  function applyStatic(){
+    var de = document.documentElement;
+    de.lang = LANG; de.dir = LANG === "en" ? "ltr" : "rtl";
+    [].forEach.call(document.querySelectorAll("[data-i18n]"), function(el){ el.textContent = t(el.getAttribute("data-i18n")); });
+    [].forEach.call(document.querySelectorAll("[data-i18n-html]"), function(el){ el.innerHTML = t(el.getAttribute("data-i18n-html")); });
+    q.placeholder = t("search"); q.setAttribute("aria-label", t("searchLabel"));
+    document.getElementById("repNote").placeholder = t("repNote");
+    var lb = document.getElementById("langBtn"); lb.textContent = t("langBtn"); lb.title = t("langTip"); lb.setAttribute("aria-label", t("langTip"));
+    var sb = document.getElementById("statsBtn"); if (sb){ sb.title = t("statsTip"); sb.setAttribute("aria-label", t("statsTip")); }
+    document.getElementById("ann").setAttribute("aria-label", t("annLabel"));
+    setThemeButton();
+  }
+
+  /* -------------------------- announcements -------------------------- */
+  var ANN_ICON = { info:"info", warning:"triangle-alert", danger:"octagon-alert", success:"circle-check" };
+  function dismissed(){ try { return JSON.parse(store.get("itoc_ann_hidden") || "[]"); } catch (e) { return []; } }
+  function renderAnn(){
+    var hide = dismissed();
+    document.getElementById("ann").innerHTML = ANN.filter(function(a){ return hide.indexOf(a.id) === -1; }).map(function(a){
+      var msg = LANG === "en" && a.message_en ? a.message_en : a.message;
+      return '<div class="ann ann-' + esc(a.type) + '" role="' + (a.type === "danger" ? "alert" : "status") + '"><i data-lucide="' + (ANN_ICON[a.type] || "megaphone") + '"></i>' +
+        '<p' + (isArabic(msg) ? '' : ' dir="ltr"') + '>' + esc(msg) + '</p><button type="button" data-ann="' + esc(a.id) + '" title="' + esc(t("close")) + '" aria-label="' + esc(t("close")) + '"><i data-lucide="x"></i></button></div>';
+    }).join("");
+  }
+  document.getElementById("ann").addEventListener("click", function(e){
+    var b = e.target.closest("button[data-ann]"); if (!b) return;
+    var h = dismissed(); h.push(b.getAttribute("data-ann")); store.set("itoc_ann_hidden", JSON.stringify(h.slice(-50)));
+    b.parentNode.remove();
   });
 
-  nav.innerHTML = navHtml;
-  nav.addEventListener("click", function(e){
+  /* ----------------------------- theme ----------------------------- */
+  function theme(){ return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light"; }
+  function setThemeButton(){
+    var b = document.getElementById("themeBtn"), dark = theme() === "dark";
+    b.innerHTML = '<i data-lucide="' + (dark ? "sun" : "moon") + '"></i>';
+    b.title = dark ? t("light") : t("dark"); b.setAttribute("aria-label", b.title); b.setAttribute("aria-pressed", dark);
+    if (window.lucide) lucide.createIcons();
+  }
+  document.getElementById("themeBtn").addEventListener("click", function(){
+    var next = theme() === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next); store.set("itoc_theme", next); setThemeButton();
+  });
+  document.getElementById("langBtn").addEventListener("click", function(){
+    LANG = LANG === "en" ? "ar" : "en"; store.set("itoc_lang", LANG);
+    var y = window.pageYOffset; render(); window.scrollTo(0, y);
+  });
+
+  /* ------------------------------ toast ------------------------------ */
+  var toastEl = document.getElementById("toast"), toastT = 0;
+  function toast(msg){ toastEl.textContent = msg; toastEl.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600); }
+
+  /* --------------------------- favourites --------------------------- */
+  function syncFavs(){
+    document.getElementById("favBody").innerHTML = favGrid();
+    var n = FAVS.filter(function(u){ return BY_URL[u]; }).length;
+    var fs = document.getElementById("my-favs"); fs.querySelector("[data-n]").textContent = n;
+    var fn = document.getElementById("favN"); if (fn) fn.textContent = n;
+    [].forEach.call(document.querySelectorAll(".cw"), function(w){
+      var on = FAVS.indexOf(w.getAttribute("data-url")) > -1, b = w.querySelector(".act.fav");
+      b.classList.toggle("on", on); b.setAttribute("aria-pressed", on);
+      b.title = on ? t("favDel") : t("favAdd"); b.setAttribute("aria-label", b.title);
+    });
+    if (window.lucide) lucide.createIcons();
+  }
+  function toggleFav(url, name){
+    var before = FAVS.slice(), had = FAVS.indexOf(url) > -1;
+    if (had) FAVS.splice(FAVS.indexOf(url), 1); else FAVS.push(url);
+    syncFavs(); toast(had ? t("removed") : t("added"));
+    var r = run(); if (!r) return;
+    r.withSuccessHandler(function(list){ if (Array.isArray(list)){ FAVS = list; syncFavs(); } })
+     .withFailureHandler(function(err){ FAVS = before; syncFavs(); toast((err && err.message) || t("failed")); })
+     .toggleFavorite(url, name);
+  }
+
+  /* ----------------------------- report ----------------------------- */
+  var dlg = document.getElementById("repDlg"), repFor = null;
+  function openReport(url, name){
+    repFor = { url: url, name: name };
+    document.getElementById("repName").textContent = name + " — " + url;
+    document.getElementById("repNote").value = "";
+    if (dlg.showModal) dlg.showModal(); else if (confirm(t("repTitle") + "\n" + name)) sendReport("");
+  }
+  function sendReport(note){
+    var r = run(); if (!r || !repFor){ toast(t("sent")); return; }
+    r.withSuccessHandler(function(res){ toast(res && res.duplicate ? t("dup") : t("sent")); })
+     .withFailureHandler(function(){ toast(t("failed")); })
+     .reportLink(repFor.url, repFor.name, note);
+  }
+  dlg.addEventListener("close", function(){ if (dlg.returnValue === "send") sendReport(document.getElementById("repNote").value); });
+
+  /* ------------------------- click handling ------------------------- */
+  document.addEventListener("click", function(e){
+    var act = e.target.closest && e.target.closest(".act");
+    if (act){
+      e.preventDefault(); e.stopPropagation();
+      var w = act.closest(".cw"), a = w.querySelector("a.card");
+      var url = w.getAttribute("data-url"), name = a.getAttribute("data-name");
+      if (act.getAttribute("data-act") === "fav") toggleFav(url, name); else openReport(url, name);
+      return;
+    }
+    var c = e.target.closest && e.target.closest("a.card");
+    if (c){ try { var r = run(); if (r) r.trackClick(c.getAttribute("data-url") || c.href, c.getAttribute("data-name") || ""); } catch (err) {} }
+  }, true);
+
+  /* ------------------------------ navigation ------------------------------ */
+  function goTo(e){
     var a = e.target.closest("a"); if (!a) return;
     e.preventDefault();
-    var t = document.getElementById(a.getAttribute("href").slice(1));
-    if (t) window.scrollTo({ top: t.getBoundingClientRect().top + window.pageYOffset - 130, behavior: "smooth" });
-  });
-  wrap.innerHTML = html;
-  document.getElementById("stats").innerHTML =
-    '<span class="chip"><i data-lucide="link"></i><b>' + total + '</b> رابط</span>' +
-    '<span class="chip"><i data-lucide="layers"></i><b>' + SECTIONS.length + '</b> أقسام</span>' +
-    '<span class="chip"><i data-lucide="shield"></i><b>' + internal + '</b> على الشبكة الداخلية</span>';
+    var id = a.getAttribute("href").slice(1), el = document.getElementById(id);
+    var stick = document.querySelector(".sticky"), off = (stick ? stick.offsetHeight : 120) + 14;
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - off, behavior: "smooth" });
+    [].forEach.call(document.querySelectorAll("#nav a, #sideNav a"), function(x){ x.classList.toggle("active", x.getAttribute("href") === "#" + id); });
+    lockUntil = Date.now() + 1200;
+  }
+  nav.addEventListener("click", goTo);
+  sideNav.addEventListener("click", goTo);
 
-  if (window.lucide) lucide.createIcons();
+  function bindObserver(){
+    if (!("IntersectionObserver" in window)) return;
+    if (io) io.disconnect();
+    var links = {};
+    [].forEach.call(document.querySelectorAll("#nav a, #sideNav a"), function(a){ var k = a.getAttribute("href").slice(1); (links[k] = links[k] || []).push(a); });
+    io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (!en.isIntersecting || Date.now() < lockUntil) return;
+        for (var k in links) links[k].forEach(function(a){ a.classList.remove("active"); });
+        (links[en.target.id] || []).forEach(function(a){ a.classList.add("active"); });
+      });
+    }, { rootMargin: "-40% 0px -55% 0px" });
+    [].forEach.call(document.querySelectorAll("#sections > .section"), function(s){ io.observe(s); });
+  }
 
-  // Search
+  /* ------------------------------ search ------------------------------ */
   var q = document.getElementById("q"), empty = document.getElementById("empty");
-  var cards = [].slice.call(document.querySelectorAll(".card"));
-  var secs = [].slice.call(document.querySelectorAll(".section"));
   function filter(){
     var v = q.value.trim().toLowerCase(), shown = 0;
-    cards.forEach(function(c){ var ok = !v || c.getAttribute("data-s").indexOf(v) > -1; c.classList.toggle("hidden", !ok); if (ok) shown++; });
-    secs.forEach(function(s){
-      var n = s.querySelectorAll(".card:not(.hidden)").length;
+    [].forEach.call(document.querySelectorAll("#my-favs, #top-used"), function(s){ s.classList.toggle("hidden", !!v); });
+    [].forEach.call(document.querySelectorAll("#sections > .section:not(.top):not(.favs)"), function(s){
+      var n = 0;
+      [].forEach.call(s.querySelectorAll(".cw"), function(c){ var ok = !v || c.getAttribute("data-s").indexOf(v) > -1; c.classList.toggle("hidden", !ok); if (ok) n++; });
+      shown += n;
       s.classList.toggle("hidden", n === 0);
       s.querySelector("[data-n]").textContent = n;
+      var sl = sideNav.querySelector('a[href="#' + s.id + '"]');
+      if (sl){ sl.querySelector(".n").textContent = n; sl.classList.toggle("dim", n === 0); }
     });
+    [].forEach.call(sideNav.querySelectorAll('a[href="#top-used"], a[href="#my-favs"]'), function(a){ a.classList.toggle("dim", !!v); });
     empty.style.display = shown ? "none" : "block";
   }
   q.addEventListener("input", filter);
   q.addEventListener("keydown", function(e){
     if (e.key === "Escape"){ q.value = ""; filter(); q.blur(); }
-    if (e.key === "Enter"){ var first = document.querySelector(".card:not(.hidden)"); if (first) window.open(first.href, "_blank", "noopener"); }
+    if (e.key === "Enter"){ var first = document.querySelector("#sections .section:not(.hidden):not(.top):not(.favs) .cw:not(.hidden) a.card"); if (first) window.open(first.href, "_blank", "noopener"); }
   });
   document.addEventListener("keydown", function(e){
-    if (e.key === "/" && document.activeElement !== q){ e.preventDefault(); q.focus(); }
+    if (e.key === "/" && document.activeElement !== q && !(dlg.open)){ e.preventDefault(); q.focus(); }
   });
 
-  // Highlight active section in navbar
-  if ("IntersectionObserver" in window){
-    var links = {}; [].forEach.call(nav.querySelectorAll("a"), function(a){ links[a.getAttribute("href").slice(1)] = a; });
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){ if (en.isIntersecting){ for (var k in links) links[k].classList.remove("active"); if (links[en.target.id]) links[en.target.id].classList.add("active"); } });
-    }, { rootMargin: "-40% 0px -55% 0px" });
-    secs.forEach(function(s){ io.observe(s); });
-  }
+  /* ------------------- service status refresh (5 min) ------------------- */
+  setInterval(function(){
+    var r = run(); if (!r) return;
+    r.withSuccessHandler(function(s){
+      if (!s) return; STATUS = s;
+      [].forEach.call(document.querySelectorAll(".cw"), function(w){
+        var ic = w.querySelector(".ic"), old = ic.querySelector(".sdot");
+        if (old) old.remove();
+        var d = dot(w.getAttribute("data-url")); if (d) ic.insertAdjacentHTML("beforeend", d);
+      });
+    }).getStatus();
+  }, 5 * 60 * 1000);
+
+  render();
 })();
 </script>
 </body>
