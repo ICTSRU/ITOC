@@ -12,6 +12,7 @@ const NAME_PAIRS = [
   ['هيئة الحكومة الرقمية', 'Digital Government Authority', []],
   ['الهيئة الوطنية للأمن السيبراني', 'National Cybersecurity Authority', []],
   ['المركز الوطني للتعليم الإلكتروني', 'National eLearning Center', []],
+  ['الهيئة السعودية للبيانات والذكاء الاصطناعي', 'Saudi Data & AI Authority', ['SDAIA', 'سدايا']],
   ['جرد البنية التحتية', 'Infrastructure Inventory', ['Inventory']],
   ['التقرير الأسبوعي', 'Weekly Report', ['Weekly Report']],
   ['الفحص اليومي', 'Daily Check', ['Daily Check']],

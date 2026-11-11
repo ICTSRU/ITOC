@@ -535,6 +535,7 @@ const SEED_LINKS = [
   ["useful", "هيئة الحكومة الرقمية", "https://dga.gov.sa", "landmark", "هيئة الحكومة الرقمية (DGA)", false, false],
   ["useful", "الهيئة الوطنية للأمن السيبراني", "https://nca.gov.sa", "shield-check", "الهيئة الوطنية للأمن السيبراني (NCA)", false, false],
   ["useful", "المركز الوطني للتعليم الإلكتروني", "https://nelc.gov.sa", "graduation-cap", "المركز الوطني للتعليم الإلكتروني (NELC)", false, false],
+  ["useful", "الهيئة السعودية للبيانات والذكاء الاصطناعي", "https://sdaia.gov.sa", "cpu", "الهيئة السعودية للبيانات والذكاء الاصطناعي (SDAIA)", false, false],
   ["ictd", "Inventory", "https://ictsru.github.io/ICTD/sru_infrastructure_inventory.html", "boxes", "جرد أصول البنية التحتية", false, false],
   ["ictd", "Weekly Report", "https://ictsru.github.io/ictd-weekly-report/", "clipboard-list", "التقرير الأسبوعي للإدارة", false, false],
   ["ictd", "Daily Check", "https://ictsru.github.io/daily/", "activity", "تقرير الفحص اليومي", true, false],
