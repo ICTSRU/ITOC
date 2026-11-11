@@ -3,6 +3,7 @@
 ## [3.4] — 2026-11-11
 ### Added
 - **New section «روابط مفيدة» / Useful Links** (teal) with eight starter government references (DGA · NCA · NELC · SDAIA · CST · MCIT · ETEC · Etimad) — edit freely in the `Sections` / `Links` sheets.
+- **عرض مجمّع (Grouped view)** — زر تبديل في الشريط العلوي (و`?view=grouped`) يعرض أدوات ITOC في 7 أقسام مصنّفة (تشغيل · بنية تحتية · مهام · حوكمة · موارد بشرية · خدمات · معرفة) دون تغيير البيانات؛ يُحفظ الاختيار لكل جهاز. عمود `group` اختياري في `Links` لضبط التصنيف يدويًا.
 - **CI auto-deploy** — `.github/workflows/deploy-appsscript.yml` (clasp) + `apps-script/appsscript.json`. A push to `apps-script/**` on main runs `clasp push` + `clasp deploy -i $DEPLOYMENT_ID` (same web-app URL). Secrets: `CLASPRC_JSON`, `SCRIPT_ID`, `DEPLOYMENT_ID`.
 
 ## [3.3] — 2026-10-24

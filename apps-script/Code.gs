@@ -390,6 +390,7 @@ function getData_() {
             icon:  String(l.icon || 'link').trim(),
             note:  String(l.note || '').trim(),
             note_en: String(l.note_en || '').trim(),
+            group: String(l.group || '').trim(),
             isNew: isNewLink_(l),
             featured: isOn_(l.featured)
           }))

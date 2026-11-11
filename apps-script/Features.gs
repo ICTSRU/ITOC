@@ -117,6 +117,7 @@ function ensureColumns_() {
   const c = ensureColumn_(SHEET_LINKS, 'added_on', 'تاريخ الإضافة — يُكتب تلقائيًا عند إضافة رابط جديد، وتظهر شارة «جديد» ' + NEW_DAYS + ' يومًا ثم تختفي', false, 110);
   if (c) SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_LINKS).getRange(2, c, 1000, 1).setNumberFormat('yyyy-mm-dd');
   ensureColumn_(SHEET_LINKS, 'note_en', 'الوصف بالإنجليزية (اختياري — يظهر في واجهة English)', false, 240);
+  ensureColumn_(SHEET_LINKS, 'group', 'مجموعة العرض المجمّع (اختياري): ops · infra · tasks · gov · hr · services · knowledge', false, 110);
   ensureColumn_(SHEET_SECTIONS, 'title_en', 'اسم القسم بالإنجليزية (اختياري)', false, 200);
   ensureColumn_(SHEET_SECTIONS, 'subtitle_en', 'وصف القسم بالإنجليزية (اختياري)', false, 320);
 }

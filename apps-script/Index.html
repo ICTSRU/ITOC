@@ -329,6 +329,7 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
       </label>
       <div class="tools">
         <? if (isAdmin && statsUrl) { ?><a class="tool" id="statsBtn" href="<?= statsUrl ?>" target="_top" title="الإحصاءات"><i data-lucide="chart-column"></i></a><? } ?>
+        <button class="tool" id="viewBtn" type="button" title="عرض مجمّع"><i data-lucide="layout-grid"></i></button>
         <button class="tool" id="langBtn" type="button" title="English">EN</button>
         <button class="tool" id="themeBtn" type="button" title="الوضع الداكن"><i data-lucide="moon"></i></button>
       </div>
@@ -412,6 +413,7 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
           favAdd:"إضافة إلى المفضلة", favDel:"إزالة من المفضلة", report:"الإبلاغ عن رابط لا يعمل",
           repTitle:"الإبلاغ عن رابط لا يعمل", repNote:"ما المشكلة؟ (اختياري)", cancel:"إلغاء", send:"إرسال البلاغ",
           sent:"شكرًا — وصل البلاغ إلى فريق التشغيل", dup:"تم استلام بلاغك عن هذا الرابط مسبقًا", failed:"تعذّر الحفظ — حاول مرة أخرى",
+          viewGroupTip:"عرض مجمّع حسب الفئة", viewFlatTip:"العرض الحالي (مسطّح)", groupedBadge:"عرض مجمّع",
           added:"أُضيف إلى مفضلتك", removed:"أُزيل من مفضلتك", dark:"الوضع الداكن", light:"الوضع الفاتح", langBtn:"EN", langTip:"English",
           close:"إغلاق", statsTip:"الإحصاءات", annLabel:"إعلانات", checked:"آخر فحص" },
     en: { sections:"Sections", stats:"Statistics (admins)", brand:"IT Operations Center", title:"Systems & Services Index",
@@ -426,6 +428,7 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
           favAdd:"Add to favourites", favDel:"Remove from favourites", report:"Report a broken link",
           repTitle:"Report a broken link", repNote:"What is wrong? (optional)", cancel:"Cancel", send:"Send report",
           sent:"Thank you — the operations team has your report", dup:"You already reported this link", failed:"Could not save — please try again",
+          viewGroupTip:"Grouped view by category", viewFlatTip:"Current (flat) view", groupedBadge:"Grouped",
           added:"Added to favourites", removed:"Removed from favourites", dark:"Dark mode", light:"Light mode", langBtn:"ع", langTip:"العربية",
           close:"Close", statsTip:"Statistics", annLabel:"Announcements", checked:"Last check" }
   };
@@ -446,6 +449,67 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
                      ai:'#7b3fc4', moe:'#00695c', test:'#b26a00', forms:'#c0392b' };
   var PALETTE = ['#501e8c','#0a6eaa','#0a8a96','#2e7d32','#7b3fc4','#00695c','#b26a00','#c0392b','#ad1457','#37474f'];
   function secColor(id, i){ return SEC_COLORS[id] || PALETTE[i % PALETTE.length]; }
+
+  /* ---- v3.4 grouped view (الخيار ب): a display mode only — data stays flat ---- */
+  var GROUPS = [
+    { id:"ops",       ar:"التشغيل والمراقبة اليومية", en:"Daily Operations & Monitoring", icon:"activity",    color:"#501e8c" },
+    { id:"infra",     ar:"البنية التحتية والأصول",     en:"Infrastructure & Assets",        icon:"server",      color:"#0a6eaa" },
+    { id:"tasks",     ar:"المهام والتخطيط والمخاطر",   en:"Tasks, Planning & Risk",         icon:"list-checks", color:"#0a8a96" },
+    { id:"gov",       ar:"الحوكمة والجودة والامتثال",  en:"Governance, Quality & Compliance", icon:"book-text", color:"#2e7d32" },
+    { id:"hr",        ar:"الموارد البشرية والأداء",    en:"HR & Performance",               icon:"users-round", color:"#7b3fc4" },
+    { id:"services",  ar:"خدمات ومنصات المستفيدين",   en:"Beneficiary Services",           icon:"megaphone",   color:"#00695c" },
+    { id:"knowledge", ar:"المعرفة والتقارير",          en:"Knowledge & Reporting",          icon:"library",     color:"#b26a00" }
+  ];
+  var GID = {}; GROUPS.forEach(function(g){ GID[g.id] = g; });
+  var GROUP_ORDER = {}; GROUPS.forEach(function(g, i){ GROUP_ORDER[g.id] = i; });
+  function normName(x){ return String(x||"").trim().toLowerCase().replace(/[أإآ]/g,"ا").replace(/\s+/g," "); }
+  var DEFAULT_GROUP = {};
+  (function(){
+    var M = {
+      ops:["الفحص اليومي","التقرير الأسبوعي","منصة نبض الشبكة","تسجيل حادث عرضي","سجل دخول مركز المعلومات",
+           "daily check","weekly report","netpulse","incident report","dc visitor"],
+      infra:["جرد البنية التحتية","التوأم الرقمي لمركز المعلومات","infrastructure inventory","data center digital twin"],
+      tasks:["إدارة المهام","الخطة التشغيلية","سجل المخاطر","task manager","operational plan","risk register"],
+      gov:["سياسات الادارة","الاجراءات التشغيلية القياسية","المراجعة الداخلية","محضر الاجتماع","مذكرة تفاهم",
+           "ictd policies","sop","internal audit","interinal audit","meeting minutes","mou"],
+      hr:["الوصف الوظيفي","نموذج مقابلة","منصة المتابعة والتقييم السنوي للاداء","job description","interview evaluation","appraisal platform","appraisal platoform"],
+      services:["منصة الفعاليات","منصة صوت الطالب","قهوتك مع تقنية المعلومات","دليل الاتصال","منشئ الشهادات",
+                "events platform","sruvoice","coffee with it","contact directory","certificate builder"],
+      knowledge:["التقارير","مكتبة الملفات الرقمية","reports","it digital library"]
+    };
+    Object.keys(M).forEach(function(gid){ M[gid].forEach(function(nm){ DEFAULT_GROUP[normName(nm)] = gid; }); });
+  })();
+  function groupOf(l){
+    var g = l.group && GID[String(l.group).trim()] ? String(l.group).trim() : "";
+    if (g) return g;
+    return DEFAULT_GROUP[normName(l.name)] || DEFAULT_GROUP[normName(l.name_en)] || "";
+  }
+  function expandGrouped(sections){
+    var out = [];
+    sections.forEach(function(sec){
+      var buckets = {}, hasGroup = false;
+      (sec.links || []).forEach(function(l){
+        var gid = groupOf(l) || "__self";
+        if (gid !== "__self") hasGroup = true;
+        (buckets[gid] = buckets[gid] || []).push(l);
+      });
+      if (!hasGroup) { out.push(sec); return; }
+      var ids = Object.keys(buckets).filter(function(x){ return x !== "__self"; })
+                 .sort(function(a,b){ return (a in GROUP_ORDER ? GROUP_ORDER[a] : 99) - (b in GROUP_ORDER ? GROUP_ORDER[b] : 99); });
+      if (buckets.__self) ids.push("__self");
+      ids.forEach(function(gid){
+        var meta = gid === "__self" ? { ar: sec.title, en: sec.title_en, icon: sec.icon, color: null } : GID[gid];
+        out.push({ id: sec.id + "__" + gid, title: meta.ar, title_en: meta.en, subtitle: "", subtitle_en: "",
+                   icon: meta.icon, links: buckets[gid], _color: meta.color });
+      });
+    });
+    return out;
+  }
+  var VIEW = "flat";
+  try {
+    var _p = new URLSearchParams(location.search).get("view");
+    VIEW = (_p === "grouped" || _p === "flat") ? _p : (localStorage.getItem("itoc_view") === "grouped" ? "grouped" : "flat");
+  } catch (e) {}
   function isArabic(x){ return /[؀-ۿ]/.test(String(x || "")); }
   var BY_URL = {};
   SECTIONS.forEach(function(s){ (s.links || []).forEach(function(l){ if (!BY_URL[l.url]) BY_URL[l.url] = l; }); });
@@ -494,7 +558,7 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
   var io = null, lockUntil = 0;
 
   function render(){
-    var total = 0, internal = 0, navHtml = "", sideHtml = "", html = "";
+    var total = 0, internal = 0, navHtml = "", sideHtml = "", html = "", viewSections = SECTIONS;
     var favN = FAVS.filter(function(u){ return BY_URL[u]; }).length;
 
     // مفضلتي
@@ -518,8 +582,9 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
       html += '</div></section>';
     }
 
-    SECTIONS.forEach(function(sec, si){
-      var links = sec.links || [], sc = secColor(sec.id, si), title = secTitle(sec);
+    viewSections = (VIEW === "grouped") ? expandGrouped(SECTIONS) : SECTIONS;
+    viewSections.forEach(function(sec, si){
+      var links = sec.links || [], sc = sec._color || secColor(sec.id, si), title = secTitle(sec);
       total += links.length;
       navHtml += '<a href="#' + esc(sec.id) + '">' + esc(title) + '</a>';
       sideHtml += '<a href="#' + esc(sec.id) + '" style="--sc:' + sc + '"><i data-lucide="' + esc(sec.icon || "folder") + '"></i>' + esc(title) + '<span class="n">' + links.length + '</span></a>';
@@ -538,7 +603,7 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
     Object.keys(BY_URL).forEach(function(u){ var s = STATUS[u]; if (!s || isInternal(u)) return; if (s.s === "up") up++; else bad++; });
     document.getElementById("stats").innerHTML =
       '<span class="chip"><i data-lucide="link"></i><b>' + total + '</b> ' + t("links") + '</span>' +
-      '<span class="chip"><i data-lucide="layers"></i><b>' + SECTIONS.length + '</b> ' + t("secs") + '</span>' +
+      '<span class="chip"><i data-lucide="layers"></i><b>' + viewSections.length + '</b> ' + t("secs") + '</span>' +
       '<span class="chip"><i data-lucide="shield"></i><b>' + internal + '</b> ' + t("internal") + '</span>' +
       (up + bad ? '<span class="chip" title="' + esc(t("checked")) + '"><span class="legend"><i style="background:#2e7d32"></i><b>' + up + '</b> ' + t("up") + '</span>' +
                   (bad ? '&nbsp;·&nbsp;<span class="legend"><i style="background:#c62828"></i><b>' + bad + '</b> ' + t("down") + '</span>' : '') + '</span>' : '');
@@ -557,6 +622,7 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
     [].forEach.call(document.querySelectorAll("[data-i18n-html]"), function(el){ el.innerHTML = t(el.getAttribute("data-i18n-html")); });
     q.placeholder = t("search"); q.setAttribute("aria-label", t("searchLabel"));
     document.getElementById("repNote").placeholder = t("repNote");
+    var vb = document.getElementById("viewBtn"); if (vb){ var grouped = VIEW === "grouped"; vb.classList.toggle("on", grouped); vb.title = grouped ? t("viewFlatTip") : t("viewGroupTip"); vb.setAttribute("aria-pressed", grouped); vb.innerHTML = '<i data-lucide="' + (grouped ? "layout-list" : "layout-grid") + '"></i>'; }
     var lb = document.getElementById("langBtn"); lb.textContent = t("langBtn"); lb.title = t("langTip"); lb.setAttribute("aria-label", t("langTip"));
     var sb = document.getElementById("statsBtn"); if (sb){ sb.title = t("statsTip"); sb.setAttribute("aria-label", t("statsTip")); }
     document.getElementById("ann").setAttribute("aria-label", t("annLabel"));
@@ -595,6 +661,11 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
   document.getElementById("langBtn").addEventListener("click", function(){
     LANG = LANG === "en" ? "ar" : "en"; store.set("itoc_lang", LANG);
     var y = window.pageYOffset; render(); window.scrollTo(0, y);
+  });
+  document.getElementById("viewBtn").addEventListener("click", function(){
+    VIEW = VIEW === "grouped" ? "flat" : "grouped"; store.set("itoc_view", VIEW);
+    try { var u = new URL(location.href); if (VIEW === "grouped") u.searchParams.set("view", "grouped"); else u.searchParams.delete("view"); history.replaceState(null, "", u); } catch (e) {}
+    render(); window.scrollTo(0, 0);
   });
 
   /* ------------------------------ toast ------------------------------ */
