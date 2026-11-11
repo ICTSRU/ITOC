@@ -1,6 +1,8 @@
 # Changelog — ITOC Index
 
 ## [3.4] — 2026-11-11
+### Fixed
+- **Header & footer now render inside Apps Script** — the SRU Brand Kit CSS (tech-network header background + footer layout) is **inlined** in the page; Apps Script's sandbox does not load external `<link>` stylesheets from non-Google domains, which had made the hero title invisible and the footer logo oversized. External brand links are kept but are a no-op there.
 ### Added
 - **New section «روابط مفيدة» / Useful Links** (teal) with eight starter government references (DGA · NCA · NELC · SDAIA · CST · MCIT · ETEC · Etimad) — edit freely in the `Sections` / `Links` sheets.
 - **عرض مجمّع (Grouped view)** — زر تبديل في الشريط العلوي (و`?view=grouped`) يعرض أدوات ITOC في 7 أقسام مصنّفة (تشغيل · بنية تحتية · مهام · حوكمة · موارد بشرية · خدمات · معرفة) دون تغيير البيانات؛ يُحفظ الاختيار لكل جهاز. عمود `group` اختياري في `Links` لضبط التصنيف يدويًا.
