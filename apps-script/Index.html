@@ -295,6 +295,28 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
 .site-footer .in{max-width:1240px}
 @media (max-width:760px){.hero .itoc{display:none}.hero .container{grid-template-columns:1fr}}
 [data-theme=dark] .hero .chip{background:rgba(255,255,255,.1)}
+
+/* v3.4 FIX — brand styles inlined: Apps Script does not load external <link> CSS,
+   so the header band + footer are self-contained (the external links above are a no-op there). */
+.sru-tech-bg,.sru-tech-bg-dark{position:relative;overflow:hidden;isolation:isolate}
+.sru-tech-bg{background:#501e8c linear-gradient(110deg,#501e8c 0%,#4a1f8a 50%,#2b3f9e 100%)}
+.sru-tech-bg-dark{background:#3a1464 linear-gradient(110deg,#3a1464 0%,#2e2a80 100%)}
+.sru-tech-bg::before,.sru-tech-bg-dark::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22520%22%20height%3D%22200%22%20viewBox%3D%220%200%20520%20200%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%238fd3ff%22%20stroke-opacity%3D%22.35%22%20stroke-width%3D%221.2%22%3E%3Cpath%20d%3D%22M30%20150L95%2090L170%20120L230%2050L310%2085L380%2030L460%2070L510%2020%22/%3E%3Cpath%20d%3D%22M95%2090L120%2025L230%2050%22/%3E%3Cpath%20d%3D%22M170%20120L250%20170L310%2085L360%20160L460%2070%22/%3E%3Cpath%20d%3D%22M380%2030L420%20140L360%20160%22/%3E%3Cpath%20d%3D%22M30%20150L60%2060L120%2025%22/%3E%3C/g%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%22.45%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%22150%22%20r%3D%223%22/%3E%3Ccircle%20cx%3D%2295%22%20cy%3D%2290%22%20r%3D%223.5%22/%3E%3Ccircle%20cx%3D%22170%22%20cy%3D%22120%22%20r%3D%223%22/%3E%3Ccircle%20cx%3D%22230%22%20cy%3D%2250%22%20r%3D%224%22/%3E%3Ccircle%20cx%3D%22310%22%20cy%3D%2285%22%20r%3D%223%22/%3E%3Ccircle%20cx%3D%22380%22%20cy%3D%2230%22%20r%3D%223.5%22/%3E%3Ccircle%20cx%3D%22460%22%20cy%3D%2270%22%20r%3D%224%22/%3E%3Ccircle%20cx%3D%22510%22%20cy%3D%2220%22%20r%3D%222.5%22/%3E%3Ccircle%20cx%3D%22120%22%20cy%3D%2225%22%20r%3D%222.5%22/%3E%3Ccircle%20cx%3D%22250%22%20cy%3D%22170%22%20r%3D%223%22/%3E%3Ccircle%20cx%3D%22360%22%20cy%3D%22160%22%20r%3D%223%22/%3E%3Ccircle%20cx%3D%22420%22%20cy%3D%22140%22%20r%3D%222.5%22/%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2260%22%20r%3D%222.5%22/%3E%3C/g%3E%3C/svg%3E');background-size:520px 200px;animation:sruNetDrift 40s linear infinite}
+@keyframes sruNetDrift{from{background-position:0 0}to{background-position:-520px 0}}
+@media (prefers-reduced-motion:reduce){.sru-tech-bg::before,.sru-tech-bg-dark::before{animation:none}}
+@media print{.sru-tech-bg,.sru-tech-bg-dark{background:#fff!important}.sru-tech-bg::before,.sru-tech-bg-dark::before{display:none}}
+/* ===== end SRU Tech Background ===== */
+/* footer layout (inlined from sru-shell) */
+.sru-footer{color:#fff}
+.sru-footer .in{max-width:1240px;margin:0 auto;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.sru-support{direction:ltr;background:#fff;color:#3a1464;border-radius:4px;padding:8px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px;font-family:'Cairo',Tahoma,Arial,sans-serif}
+.sru-support b{font-weight:800}
+.sru-support .star{font-size:26px;font-weight:800;line-height:.6;padding-top:8px;color:#501e8c}
+.sru-support .or{color:#6b5a80}
+.sru-support a{color:#501e8c;font-weight:800;text-decoration:none}
+.sru-itoc{display:block;background:#fff;border-radius:4px;padding:5px 9px;line-height:0}
+.sru-itoc img{height:40px;width:auto;display:block}
 </style>
 <script>try{var _t=localStorage.getItem("itoc_theme");if(_t==="dark")document.documentElement.setAttribute("data-theme","dark");if(localStorage.getItem("itoc_lang")==="en"){document.documentElement.lang="en";document.documentElement.dir="ltr";}}catch(e){}</script>
 
