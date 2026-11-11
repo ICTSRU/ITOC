@@ -1,0 +1,74 @@
+name: Deploy Apps Script (clasp)
+
+# Pushes apps-script/ to the ITOC Google Apps Script project and updates the
+# existing web-app deployment (same /exec URL) whenever that folder changes on main.
+# Requires repository secrets: CLASPRC_JSON, SCRIPT_ID, DEPLOYMENT_ID.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps-script/**'
+      - '.github/workflows/deploy-appsscript.yml'
+  workflow_dispatch: {}      # allows a manual run from the Actions tab
+
+concurrency:
+  group: appsscript-deploy
+  cancel-in-progress: false  # never interrupt a deploy mid-push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify required secrets are present
+        env:
+          CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
+          SCRIPT_ID: ${{ secrets.SCRIPT_ID }}
+          DEPLOYMENT_ID: ${{ secrets.DEPLOYMENT_ID }}
+        run: |
+          missing=0
+          for v in CLASPRC_JSON SCRIPT_ID DEPLOYMENT_ID; do
+            if [ -z "${!v}" ]; then echo "::error::Missing secret $v"; missing=1; fi
+          done
+          [ "$missing" = "0" ] || { echo "Add the missing secret(s) under Settings → Secrets and variables → Actions."; exit 1; }
+
+      - name: Install clasp
+        run: npm install -g @google/clasp@2.4.2
+
+      - name: Authenticate clasp
+        env:
+          CLASPRC_JSON: ${{ secrets.CLASPRC_JSON }}
+        run: |
+          printf '%s' "$CLASPRC_JSON" > "$HOME/.clasprc.json"
+          # minimal sanity check that the secret is valid JSON
+          node -e "JSON.parse(require('fs').readFileSync(process.env.HOME + '/.clasprc.json','utf8'))" \
+            || { echo "::error::CLASPRC_JSON is not valid JSON. Re-copy the contents of your local ~/.clasprc.json after 'clasp login'."; exit 1; }
+
+      - name: Write project config (.clasp.json)
+        env:
+          SCRIPT_ID: ${{ secrets.SCRIPT_ID }}
+        run: |
+          printf '{"scriptId":"%s","rootDir":"apps-script"}' "$SCRIPT_ID" > .clasp.json
+
+      - name: Push code to Apps Script
+        run: clasp push -f
+
+      - name: Update the web-app deployment (keeps the same URL)
+        env:
+          DEPLOYMENT_ID: ${{ secrets.DEPLOYMENT_ID }}
+        run: |
+          clasp deploy -i "$DEPLOYMENT_ID" -d "CI ${{ github.sha }} @ $(date -u +%Y-%m-%dT%H:%MZ)"
+
+      - name: Summary
+        if: always()
+        run: echo "Pushed apps-script/ and updated deployment $DEPLOYMENT_ID."
+        env:
+          DEPLOYMENT_ID: ${{ secrets.DEPLOYMENT_ID }}

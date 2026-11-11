@@ -1,20 +1,20 @@
 /**
  * =====================================================================
  *  ITOC — Systems & Services Index (فهرس الأنظمة والخدمات)
- *  Version 2.6 — Google Apps Script Web App, @sr.edu.sa + access list (AllowedUsers)
+ *  Version 3.4 — Google Apps Script Web App, @sr.edu.sa + access list (AllowedUsers)
  *  ICTD — Sulaiman Al Rajhi University
  * ---------------------------------------------------------------------
- *  Files in this project:  Code.gs · Index.html · Logos.html · Denied.html
+ *  Files in this project:  Code.gs · Features.gs · Names.gs · Index.html · Stats.html · Logos.html · Denied.html
  *  Data source:            this spreadsheet → sheets "Sections" and "Links"
  *  First run:              menu  ITOC ▸ إعداد الجداول وتعبئة الروابط
  * =====================================================================
  */
 
-const APP_VERSION    = '2.6';
+const APP_VERSION    = '3.4';
 const ALLOWED_DOMAIN = 'sr.edu.sa';
 const SHEET_SECTIONS = 'Sections';
 const SHEET_LINKS    = 'Links';
-const CACHE_KEY      = 'itoc_data_v2';
+const CACHE_KEY      = 'itoc_data_v34';
 const CACHE_SECONDS  = 600;   // page data cached 10 minutes; any sheet edit clears it
 const FAVICON_URL    = 'https://ictsru.github.io/ITOC/assets/itoc-logo.png'; // set '' to disable
 const APP_NAME       = 'فهرس الأنظمة والخدمات';
@@ -52,12 +52,23 @@ const LOG_DEDUP_MINUTES  = 30;   // same user within 30 min = one entry (0 = log
 const LOG_RETENTION_DAYS = 180;  // used by the menu item that deletes old entries
 const LOG_HEADERS        = ['timestamp', 'date', 'time', 'day', 'email', 'result', 'version'];
 
-const SECTION_HEADERS = ['id', 'title', 'subtitle', 'icon', 'hidden'];
-const LINK_HEADERS    = ['section_id', 'name', 'url', 'icon', 'note', 'new', 'hidden'];
+const SECTION_HEADERS = ['id', 'title', 'subtitle', 'icon', 'hidden', 'title_en', 'subtitle_en'];
+const LINK_HEADERS    = ['section_id', 'name', 'name_en', 'url', 'icon', 'note', 'new', 'hidden', 'featured', 'added_on', 'note_en'];
+
+/* Most used (الأكثر استخدامًا) */
+const SHEET_CLICKS   = 'ClickLog';
+const TOP_COUNT      = 8;     // cards shown in "الأكثر استخدامًا"
+const TOP_DAYS       = 30;    // ranking window
+const TOP_CACHE_KEY  = 'itoc_top_v1';
+const CLICK_HEADERS  = ['timestamp', 'date', 'time', 'email', 'name', 'url'];
+// Shown until enough clicks are recorded (matched by part of the URL, in this order)
+const TOP_DEFAULTS   = ['ictd-weekly-report', 'ictsru.github.io/daily', 'NetPulse', 'sd.sr.edu.sa',
+                        'gmail.com', 'mysru.sr.edu.sa', 'iadfkf.fa.ocs.oraclecloud.com', 'office.com'];
 
 /* ----------------------------- Web app ------------------------------ */
 
-function doGet() {
+function doGet(e) {
+  const page  = String((e && e.parameter && e.parameter.page) || '').toLowerCase();
   const email = String(Session.getActiveUser().getEmail() || '').toLowerCase();
 
   // Defence in depth: the deployment is limited to the sr.edu.sa domain, the page is only
@@ -72,12 +83,33 @@ function doGet() {
       .addMetaTag('viewport', 'width=device-width, initial-scale=1');
   }
 
+  const admin   = isAdmin_(email);
+  const baseUrl = ScriptApp.getService().getUrl() || '';
+
+  // v3.1 — admin statistics page:  /exec?page=stats
+  if (page === 'stats' && admin) {
+    logAccess_(email, 'granted');
+    const st = HtmlService.createTemplateFromFile('Stats');
+    st.statsJson = safeJson_(computeStats_(30));
+    st.userEmail = email; st.version = APP_VERSION; st.homeUrl = baseUrl;
+    const so = st.evaluate().setTitle('ITOC | الإحصاءات').addMetaTag('viewport', 'width=device-width, initial-scale=1');
+    if (FAVICON_URL) so.setFaviconUrl(FAVICON_URL);
+    return so;
+  }
+
   logAccess_(email, 'granted');
 
   const t = HtmlService.createTemplateFromFile('Index');
-  t.dataJson  = safeJson_(getData_());
+  const data  = getData_();
+  t.dataJson  = safeJson_(data);
+  t.topJson   = safeJson_(getTopLinks_(data));
+  t.favJson   = safeJson_(getFavorites_(email));
+  t.annJson   = safeJson_(getAnnouncements_());
+  t.statusJson = safeJson_(getStatus_());
   t.userEmail = email;
   t.version   = APP_VERSION;
+  t.isAdmin   = admin;
+  t.statsUrl  = baseUrl ? baseUrl + '?page=stats' : '';
 
   const out = t.evaluate()
     .setTitle('ITOC | فهرس الأنظمة والخدمات')
@@ -174,6 +206,88 @@ function setupAccessList() {
   try { SpreadsheetApp.getActive().toast('قائمة المصرّح لهم جاهزة: ' + kept.length + ' بريدًا (أُضيف ' + added + ').', SHEET_ACCESS, 8); } catch (e) {}
 }
 
+/* --------------------- Most used (الأكثر استخدامًا) ------------------- */
+
+/** Adds the "featured" checkbox column to an existing Links sheet (v2.7). Safe to run many times. */
+function ensureFeaturedColumn_() {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_LINKS);
+  if (!sh) return;
+  const lastCol = sh.getLastColumn();
+  const headers = sh.getRange(1, 1, 1, lastCol).getValues()[0].map(h => String(h).trim().toLowerCase());
+  if (headers.indexOf('featured') !== -1) return;
+  const col = lastCol + 1;
+  sh.getRange(1, col).setValue('featured').setFontWeight('bold').setFontColor('#ffffff').setBackground('#501e8c')
+    .setNote('علّم لتثبيت الرابط في قسم «الأكثر استخدامًا» أعلى الصفحة');
+  sh.getRange(2, col, Math.max(sh.getLastRow() - 1, 1) + 50, 1).insertCheckboxes();
+  sh.setColumnWidth(col, 80);
+}
+
+/** Called from the page (google.script.run) when a card is clicked. Never throws to the page. */
+function trackClick(url, name) {
+  try {
+    const email = String(Session.getActiveUser().getEmail() || '').toLowerCase();
+    if (accessStatus_(email) !== 'ok' || !url) return false;
+    const now = new Date();
+    const f = p => Utilities.formatDate(now, LOG_TIMEZONE, p);
+    getClickSheet_().appendRow([now, f('yyyy-MM-dd'), f('HH:mm:ss'), email, String(name || '').slice(0, 120), String(url).slice(0, 500)]);
+    return true;
+  } catch (e) { console.error('trackClick failed: ' + e); return false; }
+}
+
+function getClickSheet_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(SHEET_CLICKS);
+  if (!sh) {
+    sh = ss.insertSheet(SHEET_CLICKS);
+    sh.getRange(1, 1, 1, CLICK_HEADERS.length).setValues([CLICK_HEADERS])
+      .setFontWeight('bold').setFontColor('#ffffff').setBackground('#3a1464');
+    sh.setFrozenRows(1);
+    sh.setRightToLeft(true);
+    sh.getRange('A:A').setNumberFormat('yyyy-mm-dd hh:mm:ss');
+    [170, 100, 80, 240, 220, 380].forEach((w, i) => sh.setColumnWidth(i + 1, w));
+  }
+  return sh;
+}
+
+/** Pinned links (featured ✓) first, then the most-clicked links of the last TOP_DAYS days. */
+function getTopLinks_(data) {
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get(TOP_CACHE_KEY);
+  if (hit) return JSON.parse(hit);
+
+  const byUrl = {};
+  data.forEach(s => s.links.forEach(l => { if (!byUrl[l.url]) byUrl[l.url] = Object.assign({ section: s.id }, l); }));
+
+  const counts = {};
+  try {
+    const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_CLICKS);
+    if (sh && sh.getLastRow() > 1) {
+      const since = new Date(Date.now() - TOP_DAYS * 864e5);
+      sh.getRange(2, 1, sh.getLastRow() - 1, CLICK_HEADERS.length).getValues().forEach(r => {
+        if (r[0] instanceof Date && r[0] >= since && byUrl[r[5]]) counts[r[5]] = (counts[r[5]] || 0) + 1;
+      });
+    }
+  } catch (e) { console.error('getTopLinks_ failed: ' + e); }
+
+  const pinned = Object.keys(byUrl).filter(u => byUrl[u].featured);
+  const ranked = Object.keys(counts).filter(u => pinned.indexOf(u) === -1).sort((a, b) => counts[b] - counts[a]);
+  let order = pinned.concat(ranked);
+  // Fill the remaining places with the default key links, so the section is never empty
+  const urls = Object.keys(byUrl);
+  TOP_DEFAULTS.forEach(frag => {
+    if (order.length >= TOP_COUNT) return;
+    const u = urls.find(x => x.toLowerCase().indexOf(String(frag).toLowerCase()) !== -1);
+    if (u && order.indexOf(u) === -1) order.push(u);
+  });
+  const top = order.slice(0, TOP_COUNT).map(u => Object.assign({}, byUrl[u], {
+    clicks: counts[u] || 0,
+    suggested: !byUrl[u].featured && !counts[u]
+  }));
+
+  try { cache.put(TOP_CACHE_KEY, JSON.stringify(top), CACHE_SECONDS); } catch (e) {}
+  return top;
+}
+
 /* ---------------------------- Access log ---------------------------- */
 
 /** Appends one row to AccessLog. Never blocks the page if logging fails. */
@@ -259,19 +373,25 @@ function getData_() {
     .filter(s => s.id && !isOn_(s.hidden))
     .map(s => {
       const id = String(s.id).trim();
+      const en = (typeof SECTION_EN_DEFAULTS !== 'undefined' && SECTION_EN_DEFAULTS[id]) || [];
       return {
         id: id,
         title: String(s.title || id),
         subtitle: String(s.subtitle || ''),
+        title_en: String(s.title_en || en[0] || ''),
+        subtitle_en: String(s.subtitle_en || en[1] || ''),
         icon: String(s.icon || 'folder'),
         links: links
-          .filter(l => String(l.section_id).trim() === id && l.name && l.url && !isOn_(l.hidden))
+          .filter(l => String(l.section_id).trim() === id && (l.name || l.name_en) && l.url && !isOn_(l.hidden))
           .map(l => ({
-            name:  String(l.name).trim(),
+            name:  String(l.name || l.name_en).trim(),
+            name_en: String(l.name_en || '').trim(),
             url:   String(l.url).trim(),
             icon:  String(l.icon || 'link').trim(),
             note:  String(l.note || '').trim(),
-            isNew: isOn_(l['new'])
+            note_en: String(l.note_en || '').trim(),
+            isNew: isNewLink_(l),
+            featured: isOn_(l.featured)
           }))
       };
     });
@@ -300,6 +420,7 @@ function safeJson_(obj) {
 /* ---------------------------- Sheet tools --------------------------- */
 
 function onOpen() {
+  try { ensureColumns_(); } catch (e) { /* not critical */ }
   SpreadsheetApp.getUi().createMenu('ITOC')
     .addItem('إعداد الجداول وتعبئة الروابط (أول مرة)', 'setupSheets')
     .addItem('تحديث الصفحة الآن (مسح الذاكرة المؤقتة)', 'clearCache')
@@ -309,17 +430,33 @@ function onOpen() {
     .addItem('ملخص سجل الدخول (30 يومًا)', 'showLogSummary')
     .addItem('حذف سجلات الدخول القديمة', 'purgeOldLogs')
     .addSeparator()
+    .addItem('ترقية الجداول إلى v3.1 (مرة واحدة)', 'upgradeTo31')
+    .addItem('ترقية الجداول إلى v3.2 (الاسم العربي / الإنجليزي)', 'upgradeTo32')
+    .addItem('تفعيل المهام الآلية (الحالة + التقرير الأسبوعي)', 'setupAutomation')
+    .addItem('فحص حالة الروابط الآن', 'checkServicesMenu_')
+    .addItem('إرسال التقرير الأسبوعي الآن (تجربة)', 'sendWeeklyReport')
+    .addItem('إيقاف المهام الآلية', 'removeAutomation')
+    .addSeparator()
     .addItem('عرض رابط الصفحة', 'showWebAppUrl')
     .addToUi();
 }
 
 /** Simple trigger: any edit in the sheet refreshes the page data. */
-function onEdit() {
-  CacheService.getScriptCache().removeAll([CACHE_KEY, 'acl_v1']);
+function onEdit(e) {
+  try { stampAddedOn_(e); } catch (err) { /* not critical */ }
+  CacheService.getScriptCache().removeAll([CACHE_KEY, 'acl_v1', 'acl_admins_v1', TOP_CACHE_KEY, ANN_CACHE_KEY]);
+}
+
+function checkServicesMenu_() {
+  const r = checkServices();
+  const bad = r.filter(x => x.status !== 'up');
+  SpreadsheetApp.getUi().alert('حالة الروابط', 'فُحص ' + r.length + ' رابطًا خارجيًا.\n' +
+    (bad.length ? 'تحتاج مراجعة:\n' + bad.map(b => '• ' + b.name + ' — ' + statusLabel_(b.status) + (b.code ? ' (' + b.code + ')' : '')).join('\n') : 'جميعها تعمل ✓') +
+    '\n\nالتفاصيل في ورقة ' + SHEET_STATUS, SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
 function clearCache() {
-  CacheService.getScriptCache().remove(CACHE_KEY);
+  CacheService.getScriptCache().removeAll([CACHE_KEY, TOP_CACHE_KEY, ANN_CACHE_KEY, STATUS_CACHE_KEY, 'acl_v1', 'acl_admins_v1']);
   SpreadsheetApp.getActive().toast('تم — ستظهر آخر التعديلات عند تحديث الصفحة.', 'ITOC', 5);
 }
 
@@ -339,21 +476,27 @@ function setupSheets() {
     if (r !== ui.Button.YES) return;
   }
 
-  const sec = buildSheet_(ss, SHEET_SECTIONS, SECTION_HEADERS, SEED_SECTIONS, [140, 220, 420, 140, 70]);
-  const lnk = buildSheet_(ss, SHEET_LINKS, LINK_HEADERS, SEED_LINKS, [120, 200, 420, 140, 260, 60, 70]);
+  const sec = buildSheet_(ss, SHEET_SECTIONS, SECTION_HEADERS,
+    SEED_SECTIONS.map(r => r.concat((SECTION_EN_DEFAULTS[r[0]] || ['', '']).slice(0, 2))), [140, 220, 420, 140, 70, 200, 320]);
+  const lnk = buildSheet_(ss, SHEET_LINKS, LINK_HEADERS,
+    SEED_LINKS.map(r => [r[0]].concat(seedNames_(r[1]), r.slice(2), [false, '', ''])), [120, 200, 200, 420, 140, 260, 60, 70, 80, 110, 240]);
+  lnk.getRange(2, 10, SEED_LINKS.length + 200, 1).setNumberFormat('yyyy-mm-dd');
+  lnk.getRange('B1').setNote('الاسم بالعربية — يظهر في السطر الأول من الزر');
+  lnk.getRange('C1').setNote('الاسم بالإنجليزية — يظهر في السطر الثاني من الزر');
+  lnk.getRange('J1').setNote('تاريخ الإضافة — يُكتب تلقائيًا عند إضافة رابط جديد، وتظهر شارة «جديد» ' + NEW_DAYS + ' يومًا ثم تختفي');
 
   // Checkboxes
   sec.getRange(2, 5, Math.max(SEED_SECTIONS.length, 1) + 50, 1).insertCheckboxes();
-  lnk.getRange(2, 6, SEED_LINKS.length + 200, 2).insertCheckboxes();
+  lnk.getRange(2, 7, SEED_LINKS.length + 200, 3).insertCheckboxes();
   // section_id dropdown linked to Sections!A
   const rule = SpreadsheetApp.newDataValidation()
     .requireValueInRange(sec.getRange('A2:A'), true).setAllowInvalid(false).build();
   lnk.getRange(2, 1, SEED_LINKS.length + 200, 1).setDataValidation(rule);
 
   // Notes on header cells (help for editors)
-  lnk.getRange('D1').setNote('اسم أيقونة من lucide.dev/icons — مثل: mail, database, globe');
-  lnk.getRange('F1').setNote('علّم لإظهار شارة «جديد»');
-  lnk.getRange('G1').setNote('علّم لإخفاء الرابط مؤقتًا دون حذفه');
+  lnk.getRange('E1').setNote('اسم أيقونة من lucide.dev/icons — مثل: mail, database, globe');
+  lnk.getRange('G1').setNote('علّم لإظهار شارة «جديد» (للروابط بدون تاريخ added_on)');
+  lnk.getRange('H1').setNote('علّم لإخفاء الرابط مؤقتًا دون حذفه');
   lnk.getRange('A1').setNote('اختر القسم من القائمة (من ورقة Sections)');
 
   ss.setActiveSheet(lnk);
@@ -384,10 +527,15 @@ const SEED_SECTIONS = [
   ["ai", "أدوات الذكاء الاصطناعي", "منصات الذكاء الاصطناعي التوليدي المعتمدة أو شائعة الاستخدام", "sparkles", false],
   ["moe", "وزارة التعليم", "موارد وأنظمة وزارة التعليم", "building-2", false],
   ["test", "أنظمة تحت التجربة", "بيئات الاختبار والمشروعات التجريبية والتطويرية", "test-tube-diagonal", false],
-  ["forms", "النماذج", "نماذج الطلبات والخدمات الجامعية", "clipboard-list", false]
+  ["forms", "النماذج", "نماذج الطلبات والخدمات الجامعية", "clipboard-list", false],
+  ["useful", "روابط مفيدة", "روابط وأدوات ومنصات خارجية مفيدة لمنسوبي الإدارة", "bookmark", false]
 ];
 
 const SEED_LINKS = [
+  ["useful", "هيئة الحكومة الرقمية", "https://dga.gov.sa", "landmark", "هيئة الحكومة الرقمية (DGA)", false, false],
+  ["useful", "الهيئة الوطنية للأمن السيبراني", "https://nca.gov.sa", "shield-check", "الهيئة الوطنية للأمن السيبراني (NCA)", false, false],
+  ["useful", "المركز الوطني للتعليم الإلكتروني", "https://nelc.gov.sa", "graduation-cap", "المركز الوطني للتعليم الإلكتروني (NELC)", false, false],
+  ["useful", "الهيئة السعودية للبيانات والذكاء الاصطناعي", "https://sdaia.gov.sa", "cpu", "الهيئة السعودية للبيانات والذكاء الاصطناعي (SDAIA)", false, false],
   ["ictd", "Inventory", "https://ictsru.github.io/ICTD/sru_infrastructure_inventory.html", "boxes", "جرد أصول البنية التحتية", false, false],
   ["ictd", "Weekly Report", "https://ictsru.github.io/ictd-weekly-report/", "clipboard-list", "التقرير الأسبوعي للإدارة", false, false],
   ["ictd", "Daily Check", "https://ictsru.github.io/daily/", "activity", "تقرير الفحص اليومي", true, false],
@@ -430,7 +578,6 @@ const SEED_LINKS = [
   ["ai", "Grok", "https://grok.com/", "orbit", "", false, false],
   ["ai", "Copilot", "https://copilot.microsoft.com/", "panels-top-left", "", false, false],
   ["ai", "NotebookLM", "https://notebooklm.google.com/", "notebook-tabs", "", false, false],
-  ["moe", "MOE", "http://10.1.107.152:8080/", "building", "", false, false],
   ["moe", "MOE Portal", "http://10.1.107.152:8080/", "log-in", "", false, false],
   ["moe", "MOE General", "http://10.1.107.152/admin/login", "network", "", false, false],
   ["moe", "MOE Employee", "http://10.1.107.152/employees/admin/login", "badge-check", "", false, false],

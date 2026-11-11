@@ -1,5 +1,24 @@
 # Changelog — ITOC Index
 
+## [3.4] — 2026-11-11
+### Added
+- **New section «روابط مفيدة» / Useful Links** (teal) with four starter government references (DGA · NCA · NELC · SDAIA) — edit freely in the `Sections` / `Links` sheets.
+- **CI auto-deploy** — `.github/workflows/deploy-appsscript.yml` (clasp) + `apps-script/appsscript.json`. A push to `apps-script/**` on main runs `clasp push` + `clasp deploy -i $DEPLOYMENT_ID` (same web-app URL). Secrets: `CLASPRC_JSON`, `SCRIPT_ID`, `DEPLOYMENT_ID`.
+
+## [3.3] — 2026-10-24
+### Changed
+- **SRU Brand Kit v1.0 applied** — 40px logos in the white brand bar, animated «SRU Tech Background · Network» on the header band, and the unified branded footer (support box + ITOC badge). Files are linked from `https://ictsru.github.io/brand/`; the page keeps its own purple if the kit is unreachable.
+
+## [3.2] — 2026-10-15
+### Added
+- **Two name columns in `Links`:** `name` (Arabic) + `name_en` (English); every button shows two lines (Arabic on top, English below).
+- New **`Names.gs`** with the Arabic/English names and the menu **ترقية الجداول إلى v3.2** (inserts `name_en`, fills both columns, highlights missing ones).
+
+## [3.1] — 2026-10-15
+### Added (10 enhancements)
+- Personal favourites ⭐ (`Favorites`) · «جديد» auto-expiry (`added_on`, 14 days) · broken-link reports 🚩 (`LinkReports` + e-mail) · announcements bar (`Announcements`) · dark mode · English interface (AR/EN) · admin statistics page (`?page=stats`) · weekly e-mail report (Sun 08:00) · service status 🟢🔴 (15-min check, `ServiceStatus`) · weekly broken-link check.
+- New files **`Features.gs`**, **`Stats.html`**. `Code.gs`: `doGet(e)` routing, automation menu, `onEdit` stamps `added_on`.
+
 ## [2.6] — 2026-10-14
 ### Changed
 - **Shared logos replaced with the official files** in `assets/` — the single source for every ICTD/ITOC platform (Brand Kit, SRU Voice, and future apps):

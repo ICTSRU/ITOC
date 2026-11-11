@@ -1,14 +1,18 @@
-# ITOC — Systems & Services Index · v2.6
+# ITOC — Systems & Services Index · v3.4
 **Access:** Google sign-in, Sulaiman Al Rajhi University accounts (@sr.edu.sa) only.
 **Data:** Google Sheet · **Hosting:** Google Apps Script Web App · **Old GitHub link:** redirects to the new page.
 
 ## Package contents
 ```
 apps-script/
-  Code.gs        Server logic: domain check, reads the sheet, cache, ITOC menu, setup + seed data (66 links)
-  Index.html     The page (same design as v1.8)
-  Logos.html     SRU, ICTD and ITOC logos (embedded)
-  Denied.html    Shown to non-@sr.edu.sa accounts
+  Code.gs         Server logic: domain check, sheet reader, cache, menu, setup + seed data
+  Features.gs     Favourites, broken-link reports, announcements, statistics, weekly e-mail, service status
+  Names.gs        Arabic/English link names + the v3.2 upgrade menu
+  Index.html      The page (SRU Brand Kit v1.0 applied — tech-network header, branded footer)
+  Stats.html      Admin statistics page (/exec?page=stats)
+  Logos.html      SRU, ICTD and ITOC logos (embedded)
+  Denied.html     Shown to non-@sr.edu.sa accounts
+  appsscript.json Manifest: Asia/Riyadh timezone, web-app access = domain
 github-redirect/
   index.html     Replaces the GitHub page; forwards to the web app
   assets/itoc-logo.png  (favicon)
@@ -59,3 +63,16 @@ Edit the file in Apps Script, then **Deploy → Manage deployments → ✏️ �
 - Google enforces sign-in, and the deployment is limited to the sr.edu.sa domain. `Code.gs` also checks the e-mail domain before rendering anything.
 - Passwords are entered on Google's own sign-in page only; the app never sees them.
 - **Old commits** of the public GitHub repo still contain `links.js` (v1.0–v1.8). To remove internal URLs from public history, delete and recreate the `ITOC` repo with only the redirect files.
+
+## Automated deployment (CI) — `.github/workflows/deploy-appsscript.yml`
+Any push to **main** that changes `apps-script/**` deploys automatically to the ITOC Apps Script project via [clasp](https://github.com/google/clasp): it runs `clasp push` then `clasp deploy -i <DEPLOYMENT_ID>`, so the web-app **URL stays the same**.
+
+**Required repository secrets** (Settings → Secrets and variables → Actions):
+| Secret | What it is |
+|---|---|
+| `CLASPRC_JSON` | contents of your local `~/.clasprc.json` after `clasp login` |
+| `SCRIPT_ID` | the Apps Script project (script) ID |
+| `DEPLOYMENT_ID` | the existing web-app deployment ID (keeps the URL) |
+
+A run can also be started manually from the **Actions** tab (workflow_dispatch). `.clasp.json` is generated at run time from `SCRIPT_ID` and is **not** committed.
+

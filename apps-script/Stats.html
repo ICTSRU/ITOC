@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="version" content="<?= version ?>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#501e8c; --purple-dark:#3a1464; --purple-light:#f0ebf8; --blue:#0a6eaa;
+  --bg:#eceaf2; --card:#fff; --ink:#241436; --muted:#6b5a80; --line:rgba(80,30,140,.12); --grid:#ece8f3;
+  --bar:#501e8c; --bar-hover:#3a1464; --track:#f0ebf8;
+  --good:#2e7d32; --bad:#c62828; --warn:#e65100;
+}
+[data-theme=dark]{
+  --bg:#110d17; --card:#1c1726; --ink:#ece6f5; --muted:#ab9fc0; --line:rgba(200,180,240,.16); --grid:#2a2336;
+  --bar:#a98be0; --bar-hover:#c8b3f0; --track:#2a2336; --purple-light:#2c2340; --purple-dark:#d7c6f4;
+  --good:#66bb6a; --bad:#ef5350; --warn:#ffa726;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Cairo",Tahoma,Arial,sans-serif;line-height:1.55}
+.container{max-width:1240px;margin:0 auto;padding:0 20px}
+.band{background:#fff;border-bottom:1px solid var(--line)}
+.band .container{display:flex;align-items:center;justify-content:space-between;padding-top:10px;padding-bottom:10px}
+.band img{height:52px;width:auto;max-width:44vw;object-fit:contain;display:block}.band .ictd{height:58px}
+.topbar{background:var(--purple-dark);color:#fff;position:sticky;top:0;z-index:10}
+[data-theme=dark] .topbar{background:#1d1430}
+.topbar .container{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px}
+.topbar h1{margin:0;font-size:1.1rem;font-weight:800;display:flex;align-items:center;gap:8px}
+.topbar h1 b{font-family:Arial,sans-serif;letter-spacing:.06em}
+.topbar h1 svg{width:20px;height:20px}
+.spacer{flex:1}
+.seg{display:inline-flex;background:rgba(255,255,255,.1);border-radius:9px;padding:3px}
+.seg button{font:700 .82rem "Cairo",sans-serif;border:0;background:transparent;color:#e6dcf5;padding:4px 12px;border-radius:7px;cursor:pointer}
+.seg button.on{background:#fff;color:#3a1464}
+.tbtn{display:inline-flex;align-items:center;gap:6px;color:#fff;text-decoration:none;font-weight:700;font-size:.85rem;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:5px 12px;background:transparent;cursor:pointer;font-family:inherit}
+.tbtn:hover{background:rgba(255,255,255,.12)}
+.tbtn svg{width:16px;height:16px}
+.meta{color:var(--muted);font-size:.82rem;margin:14px 0 0}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:12px}
+.kpi{background:var(--card);border-radius:12px;padding:14px 16px;box-shadow:0 2px 10px rgba(58,20,100,.06)}
+.kpi .l{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.82rem;font-weight:600}
+.kpi .l svg{width:16px;height:16px}
+.kpi .v{font-size:1.9rem;font-weight:800;line-height:1.2;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:.78rem;color:var(--muted)}
+.kpi .d .up{color:var(--good);font-weight:700}.kpi .d .down{color:var(--bad);font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.panel{background:var(--card);border-radius:12px;padding:16px 18px;box-shadow:0 2px 10px rgba(58,20,100,.06);min-width:0}
+.panel.full{grid-column:1/-1}
+.panel h2{margin:0 0 2px;font-size:1rem;color:var(--purple-dark);display:flex;align-items:center;gap:8px}
+.panel h2 svg{width:18px;height:18px;color:var(--muted)}
+.panel .sub{margin:0 0 12px;color:var(--muted);font-size:.8rem}
+/* vertical bars */
+.vchart{position:relative;height:180px;margin-inline-start:30px}
+.vchart .gl{position:absolute;left:0;right:0;border-top:1px solid var(--grid)}
+.vchart .gl span{position:absolute;inset-inline-start:-30px;top:-9px;font:600 .7rem Arial,sans-serif;color:var(--muted);width:26px;text-align:end}
+.vchart .bars{position:absolute;inset:0;display:flex;align-items:flex-end;gap:2px;direction:ltr}
+.vchart.rtl .bars{direction:rtl}
+.vchart .b{flex:1;min-width:0;height:100%;display:flex;align-items:flex-end;cursor:default}
+.vchart .b i{display:block;width:100%;background:var(--bar);border-radius:4px 4px 0 0;min-height:0;transition:background .1s}
+.vchart .b:hover i{background:var(--bar-hover)}
+.vchart .b.zero i{height:0!important}
+.xl{display:flex;gap:2px;margin-inline-start:30px;margin-top:6px;direction:ltr}
+.xl span{flex:1;min-width:0;text-align:center;font-size:.7rem;color:var(--muted);white-space:nowrap;overflow:visible}
+/* horizontal bars */
+.hrow{display:grid;grid-template-columns:minmax(110px,190px) 1fr 44px;align-items:center;gap:10px;padding:3px 0}
+.hrow .n{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrow .t{height:14px;background:var(--track);border-radius:4px;overflow:hidden}
+.hrow .t i{display:block;height:100%;background:var(--bar);border-radius:0 4px 4px 0}
+[dir=rtl] .hrow .t i{border-radius:4px 0 0 4px;margin-inline-start:0}
+.hrow .v{font:700 .82rem Arial,sans-serif;text-align:end;font-variant-numeric:tabular-nums}
+.hrow:hover .t i{background:var(--bar-hover)}
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th{text-align:start;color:var(--muted);font-weight:700;font-size:.76rem;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.num{font:700 .82rem Arial,sans-serif;text-align:end;font-variant-numeric:tabular-nums}
+td .mail{direction:ltr;unicode-bidi:isolate;font-family:Arial,sans-serif;font-size:.8rem}
+td small{color:var(--muted);display:block;font-size:.74rem;direction:ltr;text-align:start;word-break:break-all}
+.st{display:inline-flex;align-items:center;gap:5px;font-weight:700;white-space:nowrap}
+.st svg{width:15px;height:15px}
+.st.up{color:var(--good)}.st.down{color:var(--bad)}.st.broken{color:var(--warn)}
+.none{color:var(--muted);font-size:.86rem;padding:10px 0}
+.close-btn{font:700 .75rem "Cairo",sans-serif;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:6px;padding:2px 10px;cursor:pointer}
+.close-btn:hover{background:var(--purple-light)}
+.scroll{max-height:380px;overflow:auto}
+#tip{position:fixed;z-index:50;pointer-events:none;background:#241436;color:#fff;font-size:.8rem;padding:6px 10px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;transition:opacity .1s;white-space:nowrap}
+#tip b{font-family:Arial,sans-serif}
+.loading{opacity:.45;pointer-events:none}
+footer{margin-top:24px;background:var(--purple-dark);color:#e6dcf5;font-size:.82rem}
+[data-theme=dark] footer{background:#1d1430}
+footer .container{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:12px;padding-bottom:12px}
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:760px){
+  .band img{height:36px}.band .ictd{height:42px}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid2{grid-template-columns:1fr}
+  .hrow{grid-template-columns:minmax(90px,130px) 1fr 38px}
+  .topbar h1 span{display:none}
+}
+</style>
+<script>try{if(localStorage.getItem("itoc_theme")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}</script>
+</head>
+<body>
+<div class="band"><div class="container">
+  <img data-logo="sru" alt="جامعة سليمان الراجحي">
+  <img class="ictd" data-logo="ictd" alt="الإدارة التنفيذية للاتصالات وتقنية المعلومات">
+</div></div>
+
+<div class="topbar"><div class="container">
+  <h1><i data-lucide="chart-column"></i><b>ITOC</b><span>— إحصاءات الاستخدام</span></h1>
+  <div class="spacer"></div>
+  <div class="seg" id="range" role="group" aria-label="الفترة">
+    <button type="button" data-d="7">7 أيام</button><button type="button" data-d="30" class="on">30 يومًا</button><button type="button" data-d="90">90 يومًا</button>
+  </div>
+  <button class="tbtn" id="reload" type="button" title="تحديث"><i data-lucide="refresh-cw"></i></button>
+  <a class="tbtn" href="<?= homeUrl ?>" target="_top"><i data-lucide="house"></i>الفهرس</a>
+</div></div>
+
+<main class="container" id="main">
+  <p class="meta" id="meta"></p>
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid2">
+    <section class="panel full"><h2><i data-lucide="calendar-days"></i>الزيارات اليومية</h2><p class="sub">عدد مرات الدخول إلى الفهرس (المستخدم نفسه خلال 30 دقيقة = زيارة واحدة)</p>
+      <div id="daily"></div></section>
+    <section class="panel"><h2><i data-lucide="flame"></i>الأنظمة الأكثر استخدامًا</h2><p class="sub">عدد مرات فتح كل رابط من الفهرس</p>
+      <div id="topLinks"></div></section>
+    <section class="panel"><h2><i data-lucide="users"></i>المستخدمون الأكثر نشاطًا</h2><p class="sub">زيارات وفتح روابط خلال الفترة</p>
+      <div class="scroll" id="topUsers"></div></section>
+    <section class="panel"><h2><i data-lucide="calendar-days"></i>الاستخدام حسب اليوم</h2><p class="sub">فتح الروابط حسب يوم الأسبوع</p>
+      <div id="weekday"></div></section>
+    <section class="panel"><h2><i data-lucide="clock"></i>الاستخدام حسب الساعة</h2><p class="sub">فتح الروابط حسب ساعة اليوم (توقيت الرياض)</p>
+      <div id="hours"></div></section>
+    <section class="panel"><h2><i data-lucide="flag"></i>بلاغات الروابط المفتوحة</h2><p class="sub">من زر «الإبلاغ عن رابط لا يعمل»</p>
+      <div class="scroll" id="reports"></div></section>
+    <section class="panel"><h2><i data-lucide="user-x"></i>محاولات الدخول المرفوضة</h2><p class="sub">آخر 25 محاولة خلال الفترة</p>
+      <div class="scroll" id="denied"></div></section>
+    <section class="panel full"><h2><i data-lucide="activity"></i>حالة الخدمات</h2><p class="sub">فحص آلي كل 15 دقيقة للروابط الخارجية — الروابط الداخلية لا يمكن فحصها من خوادم Google</p>
+      <div class="scroll" id="status"></div></section>
+  </div>
+</main>
+
+<footer><div class="container">
+  <div>مركز العمليات التقنية <b dir="ltr">ITOC</b> — صفحة المشرفين — <span dir="ltr"><?= userEmail ?></span></div>
+  <div>الإصدار <span dir="ltr">v<?= version ?></span></div>
+</div></footer>
+<div id="tip" role="tooltip"></div>
+
+<?!= include('Logos') ?>
+<script>
+  [].forEach.call(document.querySelectorAll("img[data-logo]"), function(img){ img.src = ITOC_LOGOS[img.getAttribute("data-logo")] || ""; });
+  window.ITOC_STATS = <?!= statsJson ?>;
+</script>
+<script src="https://unpkg.com/lucide@1.48.0/dist/umd/lucide.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var esc = function(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); };
+  var fmt = function(n){ return Number(n || 0).toLocaleString("en-US"); };
+  var DAYS = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+  var $ = function(id){ return document.getElementById(id); };
+
+  function niceMax(m){ if (m <= 4) return 4; var p = Math.pow(10, Math.floor(Math.log10(m))), f = m / p; return (f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
+
+  // Vertical bars: one hue, 4px rounded top, recessive grid, hover tooltip, sparse x labels
+  function vbars(el, labels, values, every, tipFn, rtl){
+    var max = niceMax(Math.max.apply(null, values.concat([1])));
+    var h = '<div class="vchart' + (rtl ? ' rtl' : '') + '">';
+    [1, .5, 0].forEach(function(f){ h += '<div class="gl" style="top:' + ((1 - f) * 100) + '%"><span>' + fmt(Math.round(max * f)) + '</span></div>'; });
+    h += '<div class="bars">' + values.map(function(v, i){
+      return '<div class="b' + (v ? '' : ' zero') + '" data-tip="' + esc(tipFn(i, v)) + '"><i style="height:' + (v / max * 100).toFixed(1) + '%"></i></div>';
+    }).join("") + '</div></div><div class="xl"' + (rtl ? ' style="direction:rtl"' : '') + '>' + labels.map(function(l, i){ return '<span>' + (i % every === 0 ? esc(l) : '') + '</span>'; }).join("") + '</div>';
+    el.innerHTML = h;
+  }
+  // Horizontal bars: names + direct value labels (a table in disguise)
+  function hbars(el, rows){
+    if (!rows.length){ el.innerHTML = '<p class="none">لا توجد نقرات مسجلة في هذه الفترة.</p>'; return; }
+    var max = Math.max.apply(null, rows.map(function(r){ return r.n; }));
+    el.innerHTML = rows.map(function(r){
+      return '<div class="hrow" data-tip="' + esc(r.name + ' — ' + fmt(r.n) + ' مرة') + '"><span class="n" title="' + esc(r.url) + '">' + esc(r.name) + '</span>' +
+        '<span class="t"><i style="width:' + (r.n / max * 100).toFixed(1) + '%"></i></span><span class="v">' + fmt(r.n) + '</span></div>';
+    }).join("");
+  }
+  function delta(a, b){
+    if (!b) return '<span class="d">لا توجد بيانات للفترة السابقة</span>';
+    var p = Math.round((a - b) / b * 100);
+    return '<span class="d"><span class="' + (p >= 0 ? 'up' : 'down') + '">' + (p >= 0 ? '▲ ' : '▼ ') + Math.abs(p) + '%</span> عن الفترة السابقة</span>';
+  }
+  var ST = { up:["circle-check","متاح"], down:["circle-x","متوقف"], broken:["circle-alert","غير موجود (404)"] };
+  function stBadge(s){ var x = ST[s] || ["circle-alert", s || "—"]; return '<span class="st ' + esc(s) + '"><i data-lucide="' + x[0] + '"></i>' + x[1] + '</span>'; }
+
+  function render(S){
+    var k = S.kpi;
+    $("meta").textContent = "آخر " + S.days + " يومًا — حُدِّث " + S.generated + " (توقيت الرياض)";
+    [].forEach.call(document.querySelectorAll("#range button"), function(b){ b.classList.toggle("on", Number(b.getAttribute("data-d")) === S.days); });
+    var tile = function(icon, label, v, extra){ return '<div class="kpi"><div class="l"><i data-lucide="' + icon + '"></i>' + label + '</div><div class="v">' + v + '</div>' + (extra || '') + '</div>'; };
+    $("kpis").innerHTML =
+      tile("log-in", "الزيارات", fmt(k.visits), delta(k.visits, k.prevVisits)) +
+      tile("users", "المستخدمون", fmt(k.users), '<span class="d">مستخدم مختلف</span>') +
+      tile("mouse-pointer-click", "فتح الروابط", fmt(k.clicks), delta(k.clicks, k.prevClicks)) +
+      tile("shield-alert", "محاولات مرفوضة", fmt(k.denied), '<span class="d">' + (k.denied ? 'راجع الجدول أدناه' : 'لا توجد') + '</span>') +
+      tile("flag", "بلاغات مفتوحة", fmt(k.reports), '<span class="d">من المستخدمين</span>') +
+      tile("activity", "حالة الخدمات", k.checked ? fmt(k.up) + '<small style="font-size:.9rem;color:var(--muted)"> / ' + fmt(k.checked) + '</small>' : '—',
+           '<span class="d">' + (k.checked ? (k.down ? '<span class="down">' + k.down + ' تحتاج مراجعة</span>' : '<span class="up">جميعها متاحة</span>') : 'فعّل المهام الآلية') + '</span>');
+
+    var dl = S.daily.map(function(d){ return d.d.slice(5).replace("-", "/"); });
+    vbars($("daily"), dl, S.daily.map(function(d){ return d.n; }), S.days <= 7 ? 1 : S.days <= 30 ? 5 : 15,
+      function(i, v){ return S.daily[i].d + " — " + fmt(v) + " زيارة"; });
+    vbars($("weekday"), DAYS, S.weekday, 1, function(i, v){ return DAYS[i] + " — " + fmt(v) + " مرة"; }, true);
+    var hl = S.hours.map(function(_, i){ return String(i); });
+    vbars($("hours"), hl, S.hours, 3, function(i, v){ return ("0" + i).slice(-2) + ":00 – " + ("0" + i).slice(-2) + ":59 — " + fmt(v) + " مرة"; });
+    hbars($("topLinks"), S.topLinks);
+
+    $("topUsers").innerHTML = S.topUsers.length ? '<table><thead><tr><th>المستخدم</th><th style="text-align:end">زيارات</th><th style="text-align:end">روابط</th><th>آخر نشاط</th></tr></thead><tbody>' +
+      S.topUsers.map(function(u){ return '<tr><td><span class="mail">' + esc(u.email) + '</span></td><td class="num">' + fmt(u.visits) + '</td><td class="num">' + fmt(u.clicks) + '</td><td><span class="mail">' + esc(u.last) + '</span></td></tr>'; }).join("") +
+      '</tbody></table>' : '<p class="none">لا يوجد نشاط في هذه الفترة.</p>';
+
+    $("denied").innerHTML = S.denied.length ? '<table><thead><tr><th>الوقت</th><th>البريد</th><th>النتيجة</th></tr></thead><tbody>' +
+      S.denied.map(function(d){ return '<tr><td><span class="mail">' + esc(d.when) + '</span></td><td><span class="mail">' + esc(d.email) + '</span></td><td>' + esc(d.result) + '</td></tr>'; }).join("") +
+      '</tbody></table>' : '<p class="none">لا توجد محاولات مرفوضة ✓</p>';
+
+    $("reports").innerHTML = S.reports.length ? '<table><thead><tr><th>الرابط</th><th>المُبلِّغ</th><th></th></tr></thead><tbody>' +
+      S.reports.map(function(r){ return '<tr data-row="' + r.row + '"><td><b>' + esc(r.name) + '</b>' + (r.note ? '<div>' + esc(r.note) + '</div>' : '') + '<small>' + esc(r.url) + '</small></td>' +
+        '<td><span class="mail">' + esc(r.email) + '</span><small>' + esc(r.when) + '</small></td><td><button class="close-btn" type="button" data-close="' + r.row + '">إغلاق</button></td></tr>'; }).join("") +
+      '</tbody></table>' : '<p class="none">لا توجد بلاغات مفتوحة ✓</p>';
+
+    $("status").innerHTML = S.status.length ? '<table><thead><tr><th>الخدمة</th><th>الحالة</th><th style="text-align:end">HTTP</th><th style="text-align:end">زمن الاستجابة</th></tr></thead><tbody>' +
+      S.status.map(function(s){ return '<tr><td><b>' + esc(s.name) + '</b><small>' + esc(s.url) + '</small></td><td>' + stBadge(s.s) + '</td><td class="num">' + (s.c || '—') + '</td><td class="num">' + (s.ms ? fmt(s.ms) + ' ms' : '—') + '</td></tr>'; }).join("") +
+      '</tbody></table>' : '<p class="none">لم يُجرَ فحص بعد — من الشيت: قائمة ITOC ▸ تفعيل المهام الآلية.</p>';
+
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function load(days){
+    var r = window.google && google.script && google.script.run; if (!r) return;
+    $("main").classList.add("loading");
+    r.withSuccessHandler(function(S){ $("main").classList.remove("loading"); render(S); })
+     .withFailureHandler(function(e){ $("main").classList.remove("loading"); alert((e && e.message) || "تعذّر التحميل"); })
+     .getStats(days);
+  }
+  var current = (window.ITOC_STATS || {}).days || 30;
+  $("range").addEventListener("click", function(e){ var b = e.target.closest("button"); if (b){ current = Number(b.getAttribute("data-d")); load(current); } });
+  $("reload").addEventListener("click", function(){ load(current); });
+  $("reports").addEventListener("click", function(e){
+    var b = e.target.closest("button[data-close]"); if (!b) return;
+    var r = window.google && google.script && google.script.run; if (!r) return;
+    b.disabled = true;
+    r.withSuccessHandler(function(){ var tr = b.closest("tr"); tr.parentNode.removeChild(tr); })
+     .withFailureHandler(function(){ b.disabled = false; }).closeReport(Number(b.getAttribute("data-close")));
+  });
+
+  // shared tooltip
+  var tip = $("tip");
+  document.addEventListener("mousemove", function(e){
+    var t = e.target.closest && e.target.closest("[data-tip]");
+    if (!t){ tip.style.opacity = 0; return; }
+    tip.textContent = t.getAttribute("data-tip"); tip.style.opacity = 1;
+    var x = Math.min(e.clientX + 12, window.innerWidth - tip.offsetWidth - 8), y = e.clientY - tip.offsetHeight - 10;
+    tip.style.left = Math.max(8, x) + "px"; tip.style.top = (y < 8 ? e.clientY + 16 : y) + "px";
+  });
+
+  render(window.ITOC_STATS);
+})();
+</script>
+</body>
+</html>
