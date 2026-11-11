@@ -2,7 +2,7 @@
 
 ## [3.4] — 2026-11-11
 ### Added
-- **New section «روابط مفيدة» / Useful Links** (teal) with four starter government references (DGA · NCA · NELC · SDAIA) — edit freely in the `Sections` / `Links` sheets.
+- **New section «روابط مفيدة» / Useful Links** (teal) with eight starter government references (DGA · NCA · NELC · SDAIA · CST · MCIT · ETEC · Etimad) — edit freely in the `Sections` / `Links` sheets.
 - **CI auto-deploy** — `.github/workflows/deploy-appsscript.yml` (clasp) + `apps-script/appsscript.json`. A push to `apps-script/**` on main runs `clasp push` + `clasp deploy -i $DEPLOYMENT_ID` (same web-app URL). Secrets: `CLASPRC_JSON`, `SCRIPT_ID`, `DEPLOYMENT_ID`.
 
 ## [3.3] — 2026-10-24

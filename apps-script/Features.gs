@@ -599,7 +599,11 @@ const USEFUL_GOV_LINKS = [
   ['هيئة الحكومة الرقمية', 'Digital Government Authority', 'https://dga.gov.sa', 'landmark', 'هيئة الحكومة الرقمية (DGA)'],
   ['الهيئة الوطنية للأمن السيبراني', 'National Cybersecurity Authority', 'https://nca.gov.sa', 'shield-check', 'الهيئة الوطنية للأمن السيبراني (NCA)'],
   ['المركز الوطني للتعليم الإلكتروني', 'National eLearning Center', 'https://nelc.gov.sa', 'graduation-cap', 'المركز الوطني للتعليم الإلكتروني (NELC)'],
-  ['الهيئة السعودية للبيانات والذكاء الاصطناعي', 'Saudi Data & AI Authority', 'https://sdaia.gov.sa', 'cpu', 'الهيئة السعودية للبيانات والذكاء الاصطناعي (SDAIA)']
+  ['الهيئة السعودية للبيانات والذكاء الاصطناعي', 'Saudi Data & AI Authority', 'https://sdaia.gov.sa', 'cpu', 'الهيئة السعودية للبيانات والذكاء الاصطناعي (SDAIA)'],
+  ['هيئة الاتصالات والفضاء والتقنية', 'Communications, Space & Technology Commission', 'https://cst.gov.sa', 'wifi', 'هيئة الاتصالات والفضاء والتقنية (CST)'],
+  ['وزارة الاتصالات وتقنية المعلومات', 'Ministry of Communications & IT', 'https://mcit.gov.sa', 'globe', 'وزارة الاتصالات وتقنية المعلومات (MCIT)'],
+  ['هيئة تقويم التعليم والتدريب', 'Education & Training Evaluation Commission', 'https://etec.gov.sa', 'award', 'هيئة تقويم التعليم والتدريب (ETEC) — مظلّة الاعتماد الأكاديمي'],
+  ['منصة اعتماد', 'Etimad', 'https://portal.etimad.sa', 'briefcase', 'منصة اعتماد للمنافسات والمشتريات والمدفوعات الحكومية']
 ];
 
 /** First empty row in a sheet, judged by its key column (ignores pre-inserted checkbox rows). */
