@@ -1,7 +1,7 @@
 /**
  * =====================================================================
  *  ITOC — Systems & Services Index (فهرس الأنظمة والخدمات)
- *  Version 3.4 — Google Apps Script Web App, @sr.edu.sa + access list (AllowedUsers)
+ *  Version 3.5 — Google Apps Script Web App, @sr.edu.sa + access list (AllowedUsers)
  *  ICTD — Sulaiman Al Rajhi University
  * ---------------------------------------------------------------------
  *  Files in this project:  Code.gs · Features.gs · Names.gs · Index.html · Stats.html · Logos.html · Denied.html
@@ -10,7 +10,7 @@
  * =====================================================================
  */
 
-const APP_VERSION    = '3.4';
+const APP_VERSION    = '3.5';
 const ALLOWED_DOMAIN = 'sr.edu.sa';
 const SHEET_SECTIONS = 'Sections';
 const SHEET_LINKS    = 'Links';

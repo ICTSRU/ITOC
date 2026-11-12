@@ -1,5 +1,11 @@
 # Changelog — ITOC Index
 
+## [3.5] — 2026-11-12
+### Added
+- **Single sign-on with ITOC platforms** — links from the index to `ictsru.github.io` carry `#itoc`, so each platform's landing page opens the app directly instead of showing its sign-in screen (shared 30-day flag `itoc_sso`; `#login` shows the screen, `#sso-off` clears it).
+### Changed
+- Version number is now raised with **every** deployed change so the footer always identifies the running build. 3.5 also covers the changes shipped after 3.4 was first deployed: grouped-view toggle, inlined header/footer brand styles, government links menu.
+
 ## [3.4] — 2026-11-11
 ### Fixed
 - **Header & footer now render inside Apps Script** — the SRU Brand Kit CSS (tech-network header background + footer layout) is **inlined** in the page; Apps Script's sandbox does not load external `<link>` stylesheets from non-Google domains, which had made the hero title invisible and the footer logo oversized. External brand links are kept but are a no-op there.
