@@ -536,6 +536,8 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
   var BY_URL = {};
   SECTIONS.forEach(function(s){ (s.links || []).forEach(function(l){ if (!BY_URL[l.url]) BY_URL[l.url] = l; }); });
 
+  /* single sign-on: tell ITOC platform landing pages (ictsru.github.io) that the user is already signed in */
+  function ssoUrl(u){ return /^https:\/\/ictsru\.github\.io\//i.test(u) && String(u).indexOf("#") === -1 ? u + "#itoc" : u; }
   function dot(url){
     if (isInternal(url)) return "";
     var st = STATUS[url]; if (!st) return "";
@@ -550,7 +552,7 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
     var search = (ar + " " + en + " " + (l.note || "") + " " + (l.note_en || "") + " " + l.url + " " + sTitle).toLowerCase();
     var tip = intr ? t("intTip") : (note || "");
     return '<div class="cw" data-s="' + esc(search) + '" data-url="' + esc(l.url) + '">' +
-      '<a class="card" href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer" data-name="' + esc(ar || en) + '" data-url="' + esc(l.url) + '"' +
+      '<a class="card" href="' + esc(ssoUrl(l.url)) + '" target="_blank" rel="noopener noreferrer" data-name="' + esc(ar || en) + '" data-url="' + esc(l.url) + '"' +
       (tip ? ' title="' + esc(tip) + '"' : '') + '>' + (extra || '') +
       (intr ? '<span class="badge int">' + t("intBadge") + '</span>' : (l.isNew ? '<span class="badge new">' + t("newBadge") + '</span>' : '')) +
       '<span class="ic"><i data-lucide="' + esc(l.icon || "link") + '"></i>' + dot(l.url) + '</span>' +
