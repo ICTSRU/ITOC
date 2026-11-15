@@ -1,5 +1,9 @@
 # Changelog — ITOC Index
 
+## [3.8] — 2026-11-15
+### Changed
+- **User management page now uses the Cairo font** (loaded from Google Fonts) to match the index and statistics pages; it previously fell back to a system font.
+
 ## [3.7] — 2026-11-15
 ### Added
 - **Platform Access Monitor button** (admins only) in the top bar and side menu — opens the ITOC Access Monitor web app (aggregated sign-in logs across all platforms) in a new tab.

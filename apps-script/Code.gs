@@ -10,7 +10,7 @@
  * =====================================================================
  */
 
-const APP_VERSION    = '3.7';
+const APP_VERSION    = '3.8';
 const ALLOWED_DOMAIN = 'sr.edu.sa';
 const HOME_LANDING   = 'https://ictsru.github.io/ITOC/'; // branded sign-in page; #sso-off = sign out
 const MONITOR_URL    = 'https://script.google.com/a/macros/sr.edu.sa/s/AKfycbxnU4sNI_T-ro4lF-JGVtH1xxoa-_Bn50-RVYJo7z6oLC-4c7n-aY1nbDwmTWYphq5H/exec'; // ITOC Access Monitor (admins)
