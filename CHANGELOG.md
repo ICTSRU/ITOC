@@ -1,5 +1,12 @@
 # Changelog — ITOC Index
 
+## [3.6] — 2026-11-15
+### Added
+- **User management page** (`?page=users`, admins only) — list, add, edit, enable/disable, and delete entries in the `AllowedUsers` access list from a branded RTL page; the owner is protected and can never be demoted, disabled, or removed. Server functions `listUsers`/`saveUser`/`setUserActive`/`removeUser` re-check admin on every call and clear the access caches.
+- **Sign-out button** in the top bar and side menu — returns to the branded ITOC sign-in screen by opening the landing page with `#sso-off`, which now clears both the shared SSO flag (`itoc_sso`) and the per-device "skip this screen" preference (`itoc_skip_intro`) for a complete sign-out.
+### Changed
+- Version raised to 3.6 (shown in the footer and on the new page).
+
 ## [3.5] — 2026-11-12
 ### Added
 - **Single sign-on with ITOC platforms** — links from the index to `ictsru.github.io` carry `#itoc`, so each platform's landing page opens the app directly instead of showing its sign-in screen (shared 30-day flag `itoc_sso`; `#login` shows the screen, `#sso-off` clears it).

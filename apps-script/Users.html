@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ITOC | إدارة المستخدمين</title>
+<style>
+  :root{
+    --purple:#501e8c; --purple-dark:#3a1464; --blue:#2e2a80;
+    --bg:#f4f6fb; --surface:#fff; --surface-2:#eef1f8; --fg:#1b2033; --muted:#5f6684; --border:#e3e7f1;
+    --good:#13784a; --good-bg:#e4f5ec; --off:#9a5b00; --off-bg:#fbeed6; --bad:#c23131; --bad-bg:#fbe4e4;
+    --ring:rgba(80,30,140,.35);
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#0f1119; --surface:#171a25; --surface-2:#1e2231; --fg:#e8eaf4; --muted:#9aa1be; --border:#2a3042;
+    --good:#55d499; --good-bg:#12361f; --off:#f0b65c; --off-bg:#3a2a0d; --bad:#f08a8a; --bad-bg:#3a1a1a;
+    --purple:#8167c9; color-scheme:dark;
+  }}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:'Tajawal','Cairo','Segoe UI',Tahoma,sans-serif;line-height:1.55}
+  .band{background:#3a1464 linear-gradient(110deg,#3a1464,#2e2a80);color:#fff}
+  .band-in{max-width:1000px;margin:auto;padding:16px;display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;justify-content:space-between}
+  .ttl{display:flex;align-items:center;gap:12px;min-width:0}
+  .logo{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-weight:800;border:1px solid rgba(255,255,255,.3)}
+  .ttl h1{margin:0;font-size:1.25rem} .ttl p{margin:2px 0 0;font-size:.8rem;color:rgba(255,255,255,.85)}
+  .bar-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .lnk{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);
+    color:#fff;text-decoration:none;font-weight:700;font-size:.85rem;padding:7px 12px;border-radius:9px}
+  .lnk:hover{background:rgba(255,255,255,.26)}
+  .wrap{max-width:1000px;margin:auto;padding:0 16px 48px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;margin-top:18px}
+  h2{margin:0 0 4px;font-size:1.05rem} .sub{color:var(--muted);font-size:.85rem;margin:0 0 14px}
+  form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end}
+  label{display:flex;flex-direction:column;gap:5px;font-size:.8rem;color:var(--muted);font-weight:700}
+  input[type=email],input[type=text],select{font-family:inherit;font-size:.95rem;color:var(--fg);background:var(--surface-2);
+    border:1px solid var(--border);border-radius:10px;padding:9px 11px;width:100%}
+  input:focus,select:focus{outline:2px solid var(--ring);outline-offset:1px;border-color:var(--purple)}
+  .chk{flex-direction:row;align-items:center;gap:8px;font-weight:700;color:var(--fg)}
+  .chk input{width:18px;height:18px}
+  .btn{font-family:inherit;font-weight:800;font-size:.9rem;border:0;border-radius:10px;padding:10px 16px;cursor:pointer}
+  .btn-main{background:var(--purple);color:#fff} .btn-main:hover{filter:brightness(1.08)}
+  .btn-ghost{background:var(--surface-2);color:var(--fg);border:1px solid var(--border)}
+  .btn:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .search{flex:1;min-width:200px}
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:620px}
+  th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
+  thead th{background:var(--surface-2);color:var(--muted);font-weight:700;font-size:.8rem}
+  tbody tr:last-child td{border-bottom:0} tbody tr:hover td{background:var(--surface-2)}
+  td.email{direction:ltr;unicode-bidi:isolate;font-weight:700}
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:.78rem;font-weight:800}
+  .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+  .pill.on{color:var(--good);background:var(--good-bg)} .pill.off{color:var(--off);background:var(--off-bg)}
+  .role{font-weight:800} .role.admin{color:var(--purple)}
+  .row-actions{display:flex;gap:6px;flex-wrap:wrap}
+  .mini{font-family:inherit;font-size:.78rem;font-weight:700;border:1px solid var(--border);background:var(--surface);
+    color:var(--fg);border-radius:8px;padding:5px 9px;cursor:pointer}
+  .mini:hover{border-color:var(--purple)} .mini.danger{color:var(--bad)} .mini:disabled{opacity:.4;cursor:not-allowed}
+  .lock{color:var(--muted);font-size:.78rem}
+  .empty{padding:20px;text-align:center;color:var(--muted)}
+  .toast{position:fixed;inset-inline:0;bottom:18px;margin:auto;max-width:420px;background:var(--fg);color:var(--bg);
+    padding:11px 16px;border-radius:12px;text-align:center;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.3);opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1} .toast.err{background:var(--bad);color:#fff}
+  .loading{padding:30px;text-align:center;color:var(--muted)}
+  .spin{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:s 1s linear infinite;margin:0 auto 10px}
+  @keyframes s{to{transform:rotate(360deg)}}
+  footer{max-width:1000px;margin:18px auto 0;padding:0 16px;color:var(--muted);font-size:.78rem;text-align:center;line-height:1.7}
+  /* modal */
+  .modal{position:fixed;inset:0;background:rgba(8,10,18,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:60}
+  .modal[hidden]{display:none}
+  .modal-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;max-width:440px;width:100%;padding:20px}
+  .modal-card h3{margin:0 0 8px} .modal-card p{margin:0 0 16px;color:var(--muted)}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-start}
+</style>
+</head>
+<body>
+<div class="band"><div class="band-in">
+  <div class="ttl">
+    <div class="logo">ITOC</div>
+    <div><h1>إدارة المستخدمين</h1><p>قائمة المصرّح لهم بالدخول (AllowedUsers) · User Management</p></div>
+  </div>
+  <div class="bar-actions">
+    <a class="lnk" href="<?= homeUrl ?>" target="_top">← الفهرس</a>
+    <a class="lnk" href="<?= signoutUrl ?>" target="_top">تسجيل الخروج</a>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div class="card">
+    <h2 id="formTitle">إضافة مستخدم</h2>
+    <p class="sub">البريد الجامعي فقط (‎@sr.edu.sa‎). الدور «مشرف» يمنح صلاحية فتح الإحصاءات وإدارة المستخدمين.</p>
+    <form id="userForm" autocomplete="off">
+      <label>البريد الإلكتروني
+        <input type="email" id="fEmail" placeholder="name@sr.edu.sa" required>
+      </label>
+      <label>الاسم
+        <input type="text" id="fName" placeholder="الاسم (اختياري)">
+      </label>
+      <label>الدور
+        <select id="fRole"><option value="user">مستخدم</option><option value="admin">مشرف</option></select>
+      </label>
+      <label>ملاحظات
+        <input type="text" id="fNotes" placeholder="ملاحظة (اختياري)">
+      </label>
+      <label class="chk"><input type="checkbox" id="fActive" checked> نشط</label>
+      <div style="display:flex;gap:8px">
+        <button type="submit" class="btn btn-main" id="saveBtn">حفظ</button>
+        <button type="button" class="btn btn-ghost" id="resetBtn" hidden>إلغاء التعديل</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="toolbar">
+      <h2>المستخدمون (<span id="count">—</span>)</h2>
+      <input type="search" id="search" class="search" placeholder="بحث بالبريد أو الاسم…">
+    </div>
+    <div id="list"><div class="loading"><div class="spin"></div>جارٍ تحميل المستخدمين…</div></div>
+  </div>
+
+  <footer>ITOC — إدارة المستخدمين · الإصدار <?= version ?> · <span dir="ltr"><?= userEmail ?></span><br>
+  Mohamed ElMahdy, IT Operations Manager, Sulaiman Al Rajhi University</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="confirm" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cfTitle">
+    <h3 id="cfTitle">تأكيد</h3>
+    <p id="cfMsg"></p>
+    <div class="modal-actions">
+      <button class="btn btn-main" id="cfYes" style="background:var(--bad)">حذف</button>
+      <button class="btn btn-ghost" id="cfNo">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var OWNERS = <?= ownerJson ?>;
+  var USERS = [];
+  var editing = null;
+  function el(id){ return document.getElementById(id); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+  function isOwner(e){ return OWNERS.indexOf(String(e).toLowerCase())!==-1; }
+
+  var toastT;
+  function toast(msg, err){ var x=el("toast"); x.textContent=msg; x.className="toast show"+(err?" err":"");
+    clearTimeout(toastT); toastT=setTimeout(function(){ x.className="toast"; },2600); }
+
+  function busy(on){ el("saveBtn").disabled=on; el("saveBtn").textContent=on?"جارٍ الحفظ…":(editing?"حفظ التعديل":"حفظ"); }
+
+  function load(){
+    google.script.run
+      .withSuccessHandler(function(rows){ USERS=rows||[]; render(); })
+      .withFailureHandler(function(e){ el("list").innerHTML='<div class="empty">تعذّر التحميل: '+esc(e&&e.message||e)+'</div>'; })
+      .listUsers();
+  }
+
+  function render(){
+    var q=(el("search").value||"").trim().toLowerCase();
+    var rows=USERS.filter(function(u){ return !q || (u.email+" "+u.name).toLowerCase().indexOf(q)!==-1; })
+      .sort(function(a,b){ return (b.role==="admin")-(a.role==="admin") || a.email.localeCompare(b.email); });
+    el("count").textContent=USERS.length;
+    if(!rows.length){ el("list").innerHTML='<div class="empty">لا يوجد مستخدمون مطابقون.</div>'; return; }
+    var h='<div class="tbl-wrap"><table><thead><tr><th>البريد</th><th>الاسم</th><th>الدور</th><th>الحالة</th><th>ملاحظات</th><th>إجراءات</th></tr></thead><tbody>';
+    rows.forEach(function(u){
+      var owner=isOwner(u.email);
+      h+='<tr>'+
+        '<td class="email">'+esc(u.email)+(owner?' 🔒':'')+'</td>'+
+        '<td>'+esc(u.name||'—')+'</td>'+
+        '<td><span class="role '+(u.role==="admin"?"admin":"")+'">'+(u.role==="admin"?"مشرف":"مستخدم")+'</span></td>'+
+        '<td><span class="pill '+(u.active?"on":"off")+'">'+(u.active?"نشط":"موقوف")+'</span></td>'+
+        '<td>'+esc(u.notes||'')+'</td>'+
+        '<td>'+ (owner
+          ? '<span class="lock">المالك — محمي</span>'
+          : '<div class="row-actions">'+
+              '<button class="mini" data-act="edit" data-email="'+esc(u.email)+'">تعديل</button>'+
+              '<button class="mini" data-act="toggle" data-email="'+esc(u.email)+'">'+(u.active?"تعطيل":"تفعيل")+'</button>'+
+              '<button class="mini danger" data-act="del" data-email="'+esc(u.email)+'">حذف</button>'+
+            '</div>')+
+        '</td></tr>';
+    });
+    el("list").innerHTML=h+'</tbody></table></div>';
+  }
+
+  function findUser(email){ for(var i=0;i<USERS.length;i++) if(USERS[i].email===email) return USERS[i]; return null; }
+
+  function startEdit(u){
+    editing=u.email;
+    el("formTitle").textContent="تعديل مستخدم";
+    el("fEmail").value=u.email; el("fEmail").readOnly=true;
+    el("fName").value=u.name||""; el("fRole").value=u.role; el("fNotes").value=u.notes||""; el("fActive").checked=!!u.active;
+    el("resetBtn").hidden=false; el("saveBtn").textContent="حفظ التعديل";
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  function resetForm(){
+    editing=null; el("userForm").reset(); el("fActive").checked=true;
+    el("fEmail").readOnly=false; el("formTitle").textContent="إضافة مستخدم";
+    el("resetBtn").hidden=true; el("saveBtn").textContent="حفظ";
+  }
+
+  el("userForm").addEventListener("submit",function(ev){
+    ev.preventDefault();
+    var payload={ email:el("fEmail").value.trim().toLowerCase(), name:el("fName").value.trim(),
+      role:el("fRole").value, active:el("fActive").checked, notes:el("fNotes").value.trim() };
+    if(!/^[^@\s]+@sr\.edu\.sa$/i.test(payload.email)){ toast("البريد يجب أن يكون على نطاق @sr.edu.sa",true); return; }
+    busy(true);
+    google.script.run
+      .withSuccessHandler(function(){ busy(false); toast(editing?"تم حفظ التعديل":"تمت إضافة المستخدم"); resetForm(); load(); })
+      .withFailureHandler(function(e){ busy(false); toast(e&&e.message||"تعذّر الحفظ",true); })
+      .saveUser(payload);
+  });
+  el("resetBtn").addEventListener("click",resetForm);
+  el("search").addEventListener("input",render);
+
+  // row actions (delegated)
+  el("list").addEventListener("click",function(ev){
+    var b=ev.target.closest("button[data-act]"); if(!b) return;
+    var email=b.getAttribute("data-email"), act=b.getAttribute("data-act"), u=findUser(email);
+    if(!u) return;
+    if(act==="edit"){ startEdit(u); }
+    else if(act==="toggle"){
+      b.disabled=true;
+      google.script.run
+        .withSuccessHandler(function(){ toast(u.active?"تم التعطيل":"تم التفعيل"); load(); })
+        .withFailureHandler(function(e){ b.disabled=false; toast(e&&e.message||"تعذّر التغيير",true); })
+        .setUserActive(email, !u.active);
+    }
+    else if(act==="del"){ askDelete(email); }
+  });
+
+  // delete confirm
+  var pendingDel=null;
+  function askDelete(email){ pendingDel=email; el("cfMsg").textContent="حذف المستخدم "+email+" نهائيًا من قائمة الوصول؟"; el("confirm").hidden=false; el("cfNo").focus(); }
+  function closeConfirm(){ el("confirm").hidden=true; pendingDel=null; }
+  el("cfNo").addEventListener("click",closeConfirm);
+  el("confirm").addEventListener("click",function(e){ if(e.target===el("confirm")) closeConfirm(); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&!el("confirm").hidden) closeConfirm(); });
+  el("cfYes").addEventListener("click",function(){
+    if(!pendingDel) return; var email=pendingDel; el("cfYes").disabled=true;
+    google.script.run
+      .withSuccessHandler(function(){ el("cfYes").disabled=false; closeConfirm(); toast("تم حذف المستخدم"); load(); })
+      .withFailureHandler(function(e){ el("cfYes").disabled=false; closeConfirm(); toast(e&&e.message||"تعذّر الحذف",true); })
+      .removeUser(email);
+  });
+
+  load();
+</script>
+</body>
+</html>

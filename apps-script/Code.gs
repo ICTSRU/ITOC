@@ -10,8 +10,9 @@
  * =====================================================================
  */
 
-const APP_VERSION    = '3.5';
+const APP_VERSION    = '3.6';
 const ALLOWED_DOMAIN = 'sr.edu.sa';
+const HOME_LANDING   = 'https://ictsru.github.io/ITOC/'; // branded sign-in page; #sso-off = sign out
 const SHEET_SECTIONS = 'Sections';
 const SHEET_LINKS    = 'Links';
 const CACHE_KEY      = 'itoc_data_v34';
@@ -97,6 +98,18 @@ function doGet(e) {
     return so;
   }
 
+  // v3.6 — admin user-management page:  /exec?page=users
+  if (page === 'users' && admin) {
+    logAccess_(email, 'granted');
+    const u = HtmlService.createTemplateFromFile('Users');
+    u.userEmail = email; u.version = APP_VERSION; u.homeUrl = baseUrl;
+    u.signoutUrl = HOME_LANDING + '#sso-off';
+    u.ownerJson = safeJson_(OWNER_EMAILS.map(e => String(e).toLowerCase()));
+    const uo = u.evaluate().setTitle('ITOC | إدارة المستخدمين').addMetaTag('viewport', 'width=device-width, initial-scale=1');
+    if (FAVICON_URL) uo.setFaviconUrl(FAVICON_URL);
+    return uo;
+  }
+
   logAccess_(email, 'granted');
 
   const t = HtmlService.createTemplateFromFile('Index');
@@ -110,6 +123,8 @@ function doGet(e) {
   t.version   = APP_VERSION;
   t.isAdmin   = admin;
   t.statsUrl  = baseUrl ? baseUrl + '?page=stats' : '';
+  t.usersUrl  = (admin && baseUrl) ? baseUrl + '?page=users' : '';
+  t.signoutUrl = HOME_LANDING + '#sso-off';
 
   const out = t.evaluate()
     .setTitle('ITOC | فهرس الأنظمة والخدمات')
@@ -204,6 +219,104 @@ function setupAccessList() {
   CacheService.getScriptCache().remove('acl_v1');
   console.log('AllowedUsers ready: ' + kept.length + ' entries (' + added + ' added).');
   try { SpreadsheetApp.getActive().toast('قائمة المصرّح لهم جاهزة: ' + kept.length + ' بريدًا (أُضيف ' + added + ').', SHEET_ACCESS, 8); } catch (e) {}
+}
+
+/* ---------------- User management (إدارة المستخدمين) — v3.6 ------------ */
+/* Called from the Users page via google.script.run. Every function re-checks admin. */
+
+function requireAdmin_() {
+  const email = String(Session.getActiveUser().getEmail() || '').toLowerCase();
+  if (!isAdmin_(email)) throw new Error('غير مصرّح: هذه الصفحة للمشرفين فقط.');
+  return email;
+}
+
+function isOwner_(email) {
+  return OWNER_EMAILS.map(e => e.toLowerCase()).indexOf(String(email).trim().toLowerCase()) !== -1;
+}
+
+function clearAclCaches_() {
+  const c = CacheService.getScriptCache();
+  c.remove('acl_v1'); c.remove('acl_admins_v1');
+}
+
+/** List all users in AllowedUsers (admins only). */
+function listUsers() {
+  requireAdmin_();
+  const sh = accessSheet_(true);
+  const last = sh.getLastRow();
+  const rows = last > 1 ? sh.getRange(2, 1, last - 1, 5).getValues() : [];
+  return rows.filter(r => String(r[0]).trim()).map(r => ({
+    email: String(r[0]).trim().toLowerCase(),
+    name:  String(r[1] || ''),
+    role:  String(r[2] || 'user').trim().toLowerCase() === 'admin' ? 'admin' : 'user',
+    active: r[3] === true || String(r[3]).toUpperCase() === 'TRUE',
+    notes: String(r[4] || ''),
+    owner: isOwner_(r[0])
+  }));
+}
+
+/** Add a new user or update an existing one (matched by email). */
+function saveUser(u) {
+  requireAdmin_();
+  u = u || {};
+  const email = String(u.email || '').trim().toLowerCase();
+  if (!email || email.indexOf('@') < 1) throw new Error('البريد الإلكتروني غير صحيح.');
+  if (email.slice(-(ALLOWED_DOMAIN.length + 1)) !== '@' + ALLOWED_DOMAIN) throw new Error('يجب أن يكون البريد على نطاق @' + ALLOWED_DOMAIN + '.');
+
+  let role   = String(u.role || 'user').toLowerCase() === 'admin' ? 'admin' : 'user';
+  let active = u.active !== false;
+  if (isOwner_(email)) { role = 'admin'; active = true; }   // owner can never be demoted or disabled
+
+  const sh = accessSheet_(true);
+  const last = sh.getLastRow();
+  const col1 = last > 1 ? sh.getRange(2, 1, last - 1, 1).getValues() : [];
+  let rowIdx = -1, firstEmpty = -1;
+  for (let i = 0; i < col1.length; i++) {
+    const v = String(col1[i][0]).trim().toLowerCase();
+    if (v === email) { rowIdx = i + 2; break; }
+    if (!v && firstEmpty < 0) firstEmpty = i + 2;
+  }
+  const values = [[email, String(u.name || ''), role, active, String(u.notes || '')]];
+  if (rowIdx < 0) {
+    rowIdx = firstEmpty > 0 ? firstEmpty : Math.max(last, 1) + 1;
+    sh.getRange(rowIdx, 4).insertCheckboxes();
+  }
+  sh.getRange(rowIdx, 1, 1, 5).setValues(values);
+  clearAclCaches_();
+  return { ok: true, created: (rowIdx === (firstEmpty > 0 ? firstEmpty : Math.max(last, 1) + 1)) };
+}
+
+/** Enable/disable a user without deleting the row. */
+function setUserActive(email, active) {
+  requireAdmin_();
+  email = String(email || '').trim().toLowerCase();
+  if (isOwner_(email) && active === false) throw new Error('لا يمكن تعطيل المالك.');
+  const sh = accessSheet_(false); if (!sh) return { ok: false };
+  const last = sh.getLastRow(); if (last < 2) return { ok: false };
+  const col1 = sh.getRange(2, 1, last - 1, 1).getValues();
+  for (let i = 0; i < col1.length; i++) {
+    if (String(col1[i][0]).trim().toLowerCase() === email) {
+      sh.getRange(i + 2, 4).setValue(active !== false);
+      clearAclCaches_(); return { ok: true };
+    }
+  }
+  return { ok: false };
+}
+
+/** Remove a user row entirely (owner protected). */
+function removeUser(email) {
+  requireAdmin_();
+  email = String(email || '').trim().toLowerCase();
+  if (isOwner_(email)) throw new Error('لا يمكن حذف المالك.');
+  const sh = accessSheet_(false); if (!sh) return { ok: false };
+  const last = sh.getLastRow(); if (last < 2) return { ok: false };
+  const col1 = sh.getRange(2, 1, last - 1, 1).getValues();
+  for (let i = 0; i < col1.length; i++) {
+    if (String(col1[i][0]).trim().toLowerCase() === email) {
+      sh.deleteRow(i + 2); clearAclCaches_(); return { ok: true };
+    }
+  }
+  return { ok: false };
 }
 
 /* --------------------- Most used (الأكثر استخدامًا) ------------------- */

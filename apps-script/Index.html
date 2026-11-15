@@ -328,7 +328,9 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
   <div class="logo"><img data-logo="itoc" alt="ITOC — IT Operations Center"></div>
   <div class="label" data-i18n="sections">الأقسام</div>
   <nav id="sideNav"></nav>
+  <? if (isAdmin && usersUrl) { ?><a class="admin" href="<?= usersUrl ?>" target="_top"><i data-lucide="users"></i><span data-i18n="users">إدارة المستخدمين</span></a><? } ?>
   <? if (isAdmin && statsUrl) { ?><a class="admin" href="<?= statsUrl ?>" target="_top"><i data-lucide="chart-column"></i><span data-i18n="stats">الإحصاءات (للمشرفين)</span></a><? } ?>
+  <a class="admin" id="signoutSide" href="<?= signoutUrl ?>" target="_top"><i data-lucide="log-out"></i><span data-i18n="signout">تسجيل الخروج</span></a>
   <div class="me"><span><?= userEmail ?></span><i data-lucide="circle-user-round"></i></div>
 </aside>
 
@@ -350,10 +352,12 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
         <kbd>/</kbd>
       </label>
       <div class="tools">
+        <? if (isAdmin && usersUrl) { ?><a class="tool" id="usersBtn" href="<?= usersUrl ?>" target="_top" title="إدارة المستخدمين"><i data-lucide="users"></i></a><? } ?>
         <? if (isAdmin && statsUrl) { ?><a class="tool" id="statsBtn" href="<?= statsUrl ?>" target="_top" title="الإحصاءات"><i data-lucide="chart-column"></i></a><? } ?>
         <button class="tool" id="viewBtn" type="button" title="عرض مجمّع"><i data-lucide="layout-grid"></i></button>
         <button class="tool" id="langBtn" type="button" title="English">EN</button>
         <button class="tool" id="themeBtn" type="button" title="الوضع الداكن"><i data-lucide="moon"></i></button>
+        <a class="tool" id="signoutBtn" href="<?= signoutUrl ?>" target="_top" title="تسجيل الخروج"><i data-lucide="log-out"></i></a>
       </div>
       <span class="user" title="مسجّل الدخول بحساب الجامعة"><i data-lucide="circle-user-round"></i><span dir="ltr"><?= userEmail ?></span></span>
     </div>
@@ -437,7 +441,8 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
           sent:"شكرًا — وصل البلاغ إلى فريق التشغيل", dup:"تم استلام بلاغك عن هذا الرابط مسبقًا", failed:"تعذّر الحفظ — حاول مرة أخرى",
           viewGroupTip:"عرض مجمّع حسب الفئة", viewFlatTip:"العرض الحالي (مسطّح)", groupedBadge:"عرض مجمّع",
           added:"أُضيف إلى مفضلتك", removed:"أُزيل من مفضلتك", dark:"الوضع الداكن", light:"الوضع الفاتح", langBtn:"EN", langTip:"English",
-          close:"إغلاق", statsTip:"الإحصاءات", annLabel:"إعلانات", checked:"آخر فحص" },
+          close:"إغلاق", statsTip:"الإحصاءات", annLabel:"إعلانات", checked:"آخر فحص",
+          users:"إدارة المستخدمين", signout:"تسجيل الخروج", signoutTip:"تسجيل الخروج", usersTip:"إدارة المستخدمين" },
     en: { sections:"Sections", stats:"Statistics (admins)", brand:"IT Operations Center", title:"Systems & Services Index",
           intro:"One access point for the university systems, services, forms and tools run and built by the Executive Directorate of Communications & IT.",
           empty:"No links match your search.", version:"Version",
@@ -452,7 +457,8 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
           sent:"Thank you — the operations team has your report", dup:"You already reported this link", failed:"Could not save — please try again",
           viewGroupTip:"Grouped view by category", viewFlatTip:"Current (flat) view", groupedBadge:"Grouped",
           added:"Added to favourites", removed:"Removed from favourites", dark:"Dark mode", light:"Light mode", langBtn:"ع", langTip:"العربية",
-          close:"Close", statsTip:"Statistics", annLabel:"Announcements", checked:"Last check" }
+          close:"Close", statsTip:"Statistics", annLabel:"Announcements", checked:"Last check",
+          users:"User Management", signout:"Sign out", signoutTip:"Sign out", usersTip:"User Management" }
   };
   var LANG = store.get("itoc_lang") === "en" ? "en" : "ar";
   var t = function(k){ return (T[LANG] && T[LANG][k]) || T.ar[k] || k; };
@@ -649,6 +655,8 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
     var vb = document.getElementById("viewBtn"); if (vb){ var grouped = VIEW === "grouped"; vb.classList.toggle("on", grouped); vb.title = grouped ? t("viewFlatTip") : t("viewGroupTip"); vb.setAttribute("aria-pressed", grouped); vb.innerHTML = '<i data-lucide="' + (grouped ? "layout-list" : "layout-grid") + '"></i>'; }
     var lb = document.getElementById("langBtn"); lb.textContent = t("langBtn"); lb.title = t("langTip"); lb.setAttribute("aria-label", t("langTip"));
     var sb = document.getElementById("statsBtn"); if (sb){ sb.title = t("statsTip"); sb.setAttribute("aria-label", t("statsTip")); }
+    var ub = document.getElementById("usersBtn"); if (ub){ ub.title = t("usersTip"); ub.setAttribute("aria-label", t("usersTip")); }
+    var qb = document.getElementById("signoutBtn"); if (qb){ qb.title = t("signoutTip"); qb.setAttribute("aria-label", t("signoutTip")); }
     document.getElementById("ann").setAttribute("aria-label", t("annLabel"));
     setThemeButton();
   }
