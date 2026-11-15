@@ -10,9 +10,10 @@
  * =====================================================================
  */
 
-const APP_VERSION    = '3.6';
+const APP_VERSION    = '3.7';
 const ALLOWED_DOMAIN = 'sr.edu.sa';
 const HOME_LANDING   = 'https://ictsru.github.io/ITOC/'; // branded sign-in page; #sso-off = sign out
+const MONITOR_URL    = 'https://script.google.com/a/macros/sr.edu.sa/s/AKfycbxnU4sNI_T-ro4lF-JGVtH1xxoa-_Bn50-RVYJo7z6oLC-4c7n-aY1nbDwmTWYphq5H/exec'; // ITOC Access Monitor (admins)
 const SHEET_SECTIONS = 'Sections';
 const SHEET_LINKS    = 'Links';
 const CACHE_KEY      = 'itoc_data_v34';
@@ -124,6 +125,7 @@ function doGet(e) {
   t.isAdmin   = admin;
   t.statsUrl  = baseUrl ? baseUrl + '?page=stats' : '';
   t.usersUrl  = (admin && baseUrl) ? baseUrl + '?page=users' : '';
+  t.monitorUrl = admin ? MONITOR_URL : '';
   t.signoutUrl = HOME_LANDING + '#sso-off';
 
   const out = t.evaluate()

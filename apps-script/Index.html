@@ -328,6 +328,7 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
   <div class="logo"><img data-logo="itoc" alt="ITOC — IT Operations Center"></div>
   <div class="label" data-i18n="sections">الأقسام</div>
   <nav id="sideNav"></nav>
+  <? if (isAdmin && monitorUrl) { ?><a class="admin" href="<?= monitorUrl ?>" target="_blank" rel="noopener"><i data-lucide="radar"></i><span data-i18n="monitor">مراقب دخول المنصات</span></a><? } ?>
   <? if (isAdmin && usersUrl) { ?><a class="admin" href="<?= usersUrl ?>" target="_top"><i data-lucide="users"></i><span data-i18n="users">إدارة المستخدمين</span></a><? } ?>
   <? if (isAdmin && statsUrl) { ?><a class="admin" href="<?= statsUrl ?>" target="_top"><i data-lucide="chart-column"></i><span data-i18n="stats">الإحصاءات (للمشرفين)</span></a><? } ?>
   <a class="admin" id="signoutSide" href="<?= signoutUrl ?>" target="_top"><i data-lucide="log-out"></i><span data-i18n="signout">تسجيل الخروج</span></a>
@@ -352,6 +353,7 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
         <kbd>/</kbd>
       </label>
       <div class="tools">
+        <? if (isAdmin && monitorUrl) { ?><a class="tool" id="monitorBtn" href="<?= monitorUrl ?>" target="_blank" rel="noopener" title="مراقب دخول المنصات"><i data-lucide="radar"></i></a><? } ?>
         <? if (isAdmin && usersUrl) { ?><a class="tool" id="usersBtn" href="<?= usersUrl ?>" target="_top" title="إدارة المستخدمين"><i data-lucide="users"></i></a><? } ?>
         <? if (isAdmin && statsUrl) { ?><a class="tool" id="statsBtn" href="<?= statsUrl ?>" target="_top" title="الإحصاءات"><i data-lucide="chart-column"></i></a><? } ?>
         <button class="tool" id="viewBtn" type="button" title="عرض مجمّع"><i data-lucide="layout-grid"></i></button>
@@ -442,7 +444,8 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
           viewGroupTip:"عرض مجمّع حسب الفئة", viewFlatTip:"العرض الحالي (مسطّح)", groupedBadge:"عرض مجمّع",
           added:"أُضيف إلى مفضلتك", removed:"أُزيل من مفضلتك", dark:"الوضع الداكن", light:"الوضع الفاتح", langBtn:"EN", langTip:"English",
           close:"إغلاق", statsTip:"الإحصاءات", annLabel:"إعلانات", checked:"آخر فحص",
-          users:"إدارة المستخدمين", signout:"تسجيل الخروج", signoutTip:"تسجيل الخروج", usersTip:"إدارة المستخدمين" },
+          users:"إدارة المستخدمين", signout:"تسجيل الخروج", signoutTip:"تسجيل الخروج", usersTip:"إدارة المستخدمين",
+          monitor:"مراقب دخول المنصات", monitorTip:"مراقب دخول المنصات" },
     en: { sections:"Sections", stats:"Statistics (admins)", brand:"IT Operations Center", title:"Systems & Services Index",
           intro:"One access point for the university systems, services, forms and tools run and built by the Executive Directorate of Communications & IT.",
           empty:"No links match your search.", version:"Version",
@@ -458,7 +461,8 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
           viewGroupTip:"Grouped view by category", viewFlatTip:"Current (flat) view", groupedBadge:"Grouped",
           added:"Added to favourites", removed:"Removed from favourites", dark:"Dark mode", light:"Light mode", langBtn:"ع", langTip:"العربية",
           close:"Close", statsTip:"Statistics", annLabel:"Announcements", checked:"Last check",
-          users:"User Management", signout:"Sign out", signoutTip:"Sign out", usersTip:"User Management" }
+          users:"User Management", signout:"Sign out", signoutTip:"Sign out", usersTip:"User Management",
+          monitor:"Platform Access Monitor", monitorTip:"Platform Access Monitor" }
   };
   var LANG = store.get("itoc_lang") === "en" ? "en" : "ar";
   var t = function(k){ return (T[LANG] && T[LANG][k]) || T.ar[k] || k; };
@@ -656,6 +660,7 @@ body.has-side .hero .container{grid-template-columns:1fr auto}
     var lb = document.getElementById("langBtn"); lb.textContent = t("langBtn"); lb.title = t("langTip"); lb.setAttribute("aria-label", t("langTip"));
     var sb = document.getElementById("statsBtn"); if (sb){ sb.title = t("statsTip"); sb.setAttribute("aria-label", t("statsTip")); }
     var ub = document.getElementById("usersBtn"); if (ub){ ub.title = t("usersTip"); ub.setAttribute("aria-label", t("usersTip")); }
+    var mb = document.getElementById("monitorBtn"); if (mb){ mb.title = t("monitorTip"); mb.setAttribute("aria-label", t("monitorTip")); }
     var qb = document.getElementById("signoutBtn"); if (qb){ qb.title = t("signoutTip"); qb.setAttribute("aria-label", t("signoutTip")); }
     document.getElementById("ann").setAttribute("aria-label", t("annLabel"));
     setThemeButton();

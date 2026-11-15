@@ -1,5 +1,9 @@
 # Changelog — ITOC Index
 
+## [3.7] — 2026-11-15
+### Added
+- **Platform Access Monitor button** (admins only) in the top bar and side menu — opens the ITOC Access Monitor web app (aggregated sign-in logs across all platforms) in a new tab.
+
 ## [3.6] — 2026-11-15
 ### Added
 - **User management page** (`?page=users`, admins only) — list, add, edit, enable/disable, and delete entries in the `AllowedUsers` access list from a branded RTL page; the owner is protected and can never be demoted, disabled, or removed. Server functions `listUsers`/`saveUser`/`setUserActive`/`removeUser` re-check admin on every call and clear the access caches.
