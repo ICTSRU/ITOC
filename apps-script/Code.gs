@@ -10,7 +10,7 @@
  * =====================================================================
  */
 
-const APP_VERSION    = '3.8';
+const APP_VERSION    = '3.9';
 const ALLOWED_DOMAIN = 'sr.edu.sa';
 const HOME_LANDING   = 'https://ictsru.github.io/ITOC/'; // branded sign-in page; #sso-off = sign out
 const MONITOR_URL    = 'https://script.google.com/a/macros/sr.edu.sa/s/AKfycbxnU4sNI_T-ro4lF-JGVtH1xxoa-_Bn50-RVYJo7z6oLC-4c7n-aY1nbDwmTWYphq5H/exec'; // ITOC Access Monitor (admins)
@@ -319,6 +319,56 @@ function removeUser(email) {
     }
   }
   return { ok: false };
+}
+
+/* ---------------- Access request (طلب صلاحية الدخول) — v3.9 ------------ */
+/* Called from the Denied page when a university account not on the list asks
+   for access. Emails the owner(s) and logs the request. */
+
+function requestAccess(note) {
+  const email = String(Session.getActiveUser().getEmail() || '').toLowerCase();
+  if (!email) throw new Error('تعذّر تحديد حسابك. سجّل الدخول بحساب Google الجامعي.');
+  if (email.slice(-(ALLOWED_DOMAIN.length + 1)) !== '@' + ALLOWED_DOMAIN)
+    throw new Error('الدخول متاح لحسابات @' + ALLOWED_DOMAIN + ' فقط.');
+  if (accessStatus_(email) === 'ok') return { ok: true, already: true };
+
+  // Throttle: one email per requester per 10 minutes.
+  const cache = CacheService.getScriptCache();
+  const key = 'req_' + email;
+  if (cache.get(key)) return { ok: true, throttled: true };
+
+  const when = Utilities.formatDate(new Date(), LOG_TIMEZONE, 'yyyy-MM-dd HH:mm');
+  logAccessRequest_(email, note, when);
+
+  let usersUrl = '';
+  try { usersUrl = ScriptApp.getService().getUrl() + '?page=users'; } catch (e) {}
+  const safeNote = note ? String(note).slice(0, 500).replace(/</g, '&lt;') : '';
+  const html =
+    '<div style="font-family:Tahoma,Arial,sans-serif;direction:rtl;color:#241436">' +
+    '<h3 style="color:#3a1464;margin:0 0 10px">طلب صلاحية دخول — ' + APP_NAME + '</h3>' +
+    '<p>طلب المستخدم التالي صلاحية الدخول إلى المنصة:</p>' +
+    '<p><b>البريد:</b> <span dir="ltr">' + email + '</span><br><b>الوقت:</b> ' + when + '</p>' +
+    (safeNote ? ('<p><b>ملاحظة:</b> ' + safeNote + '</p>') : '') +
+    (usersUrl ? ('<p><a href="' + usersUrl + '" style="background:#501e8c;color:#fff;text-decoration:none;padding:9px 16px;border-radius:8px;display:inline-block">فتح إدارة المستخدمين لإضافته</a></p>') : '') +
+    '<hr style="border:0;border-top:1px solid #eee"><p style="color:#8a7ca0;font-size:12px">ITOC — ' + APP_NAME_EN + '</p></div>';
+  MailApp.sendEmail({
+    to: OWNER_EMAILS.join(','),
+    subject: 'ITOC — طلب صلاحية دخول: ' + email,
+    htmlBody: html,
+    replyTo: email,
+    name: 'ITOC Access'
+  });
+  cache.put(key, '1', 600);
+  return { ok: true };
+}
+
+function logAccessRequest_(email, note, when) {
+  try {
+    const ss = SpreadsheetApp.getActive(); if (!ss) return;
+    let sh = ss.getSheetByName('AccessRequests');
+    if (!sh) { sh = ss.insertSheet('AccessRequests'); sh.appendRow(['timestamp', 'email', 'note', 'status']); }
+    sh.appendRow([when || Utilities.formatDate(new Date(), LOG_TIMEZONE, 'yyyy-MM-dd HH:mm'), email, note || '', 'pending']);
+  } catch (e) {}
 }
 
 /* --------------------- Most used (الأكثر استخدامًا) ------------------- */

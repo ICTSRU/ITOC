@@ -1,5 +1,9 @@
 # Changelog — ITOC Index
 
+## [3.9] — 2026-11-17
+### Added
+- **Request access** on the "not on the access list" screen — a university account (@sr.edu.sa) that is blocked can now press **اطلب صلاحية الدخول · Request access**; the owner (m.elmahdy@sr.edu.sa) receives an email with the requester's address, time, and a link to the user-management page, and the request is logged to an `AccessRequests` sheet. Repeated presses are throttled to one email per 10 minutes, and the screen confirms "تم إرسال طلبك إلى مدير المنصة".
+
 ## [3.8] — 2026-11-15
 ### Changed
 - **User management page now uses the Cairo font** (loaded from Google Fonts) to match the index and statistics pages; it previously fell back to a system font.
